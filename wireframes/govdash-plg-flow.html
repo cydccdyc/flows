@@ -904,6 +904,114 @@
   document.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveAll(); }
   });
+
+  // ─── LOOP-BACK LINES (B2 → Step 5, C → Step 5) ───
+  function drawLoopBack() {
+    const old = document.getElementById('loop-svg');
+    if (old) old.remove();
+
+    const canvas = document.querySelector('.canvas');
+    const step5  = document.querySelector('.node.scoring');
+    const b2Card = document.querySelector('.sub-card.b2');
+    const cCard  = document.querySelector('.rb-card.cold');
+    if (!canvas || !step5 || !b2Card || !cCard) return;
+
+    canvas.style.position = 'relative';
+    const base = canvas.getBoundingClientRect();
+
+    function r(el) {
+      const rr = el.getBoundingClientRect();
+      return {
+        top:  rr.top    - base.top,
+        bot:  rr.bottom - base.top,
+        left: rr.left   - base.left,
+        right:rr.right  - base.left,
+        midY: (rr.top + rr.bottom) / 2 - base.top
+      };
+    }
+
+    const s5 = r(step5);
+    const b2 = r(b2Card);
+    const c  = r(cCard);
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.id = 'loop-svg';
+    svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:5;overflow:visible;';
+    svg.setAttribute('width', canvas.offsetWidth);
+    svg.setAttribute('height', canvas.offsetHeight);
+
+    // Arrowhead markers
+    const defs = document.createElementNS(ns, 'defs');
+    [['lp-b2','#F59E0B'],['lp-c','#7C3AED']].forEach(([id, color]) => {
+      const m = document.createElementNS(ns, 'marker');
+      m.setAttribute('id', id); m.setAttribute('markerWidth','7'); m.setAttribute('markerHeight','7');
+      m.setAttribute('refX','6'); m.setAttribute('refY','3.5'); m.setAttribute('orient','auto');
+      const poly = document.createElementNS(ns, 'polygon');
+      poly.setAttribute('points','0 0, 6 3.5, 0 7'); poly.setAttribute('fill', color);
+      m.appendChild(poly); defs.appendChild(m);
+    });
+    svg.appendChild(defs);
+
+    // Rails run just outside the right edge of the routing section
+    const maxRight = Math.max(c.right, b2.right);
+    const railB2 = maxRight + 20;
+    const railC  = maxRight + 40;
+    const R = 10; // corner radius
+
+    function addLoop(x0, y0, rail, entryY, color, markerId, label) {
+      const d = [
+        `M ${x0},${y0}`,
+        `H ${rail - R}`,
+        `Q ${rail},${y0} ${rail},${y0 - R}`,
+        `V ${entryY + R}`,
+        `Q ${rail},${entryY} ${rail - R},${entryY}`,
+        `H ${s5.right}`
+      ].join(' ');
+
+      const path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', '1.5');
+      path.setAttribute('stroke-dasharray', '5,4');
+      path.setAttribute('marker-end', `url(#${markerId})`);
+      path.setAttribute('opacity', '0.8');
+      svg.appendChild(path);
+
+      // Label on the vertical section
+      const lx = rail + 5;
+      const ly = (y0 + entryY) / 2;
+      const lw = label.length * 5.5 + 8;
+
+      const bg = document.createElementNS(ns, 'rect');
+      bg.setAttribute('x', lx); bg.setAttribute('y', ly - 7);
+      bg.setAttribute('width', lw); bg.setAttribute('height', 13);
+      bg.setAttribute('rx', 3); bg.setAttribute('fill', '#fff');
+      bg.setAttribute('opacity', '0.92');
+      svg.appendChild(bg);
+
+      const txt = document.createElementNS(ns, 'text');
+      txt.setAttribute('x', lx + lw / 2); txt.setAttribute('y', ly + 4);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('fill', color);
+      txt.setAttribute('font-size', '7');
+      txt.setAttribute('font-family', "'JetBrains Mono', monospace");
+      txt.setAttribute('font-weight', '600');
+      txt.setAttribute('letter-spacing', '0.04em');
+      txt.textContent = label;
+      svg.appendChild(txt);
+    }
+
+    addLoop(b2.right, b2.midY, railB2, s5.midY + 12, '#F59E0B', 'lp-b2', 'WEEKLY');
+    addLoop(c.right,  c.midY,  railC,  s5.midY + 30, '#7C3AED', 'lp-c',  'QUARTERLY');
+
+    canvas.appendChild(svg);
+  }
+
+  let _loopT;
+  window.addEventListener('load', drawLoopBack);
+  window.addEventListener('resize', () => { clearTimeout(_loopT); _loopT = setTimeout(drawLoopBack, 120); });
 </script>
 </body>
 </html>
