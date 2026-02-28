@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GovDash Discover — PLS Data Flow</title>
+
+  <!-- Firebase SDKs (Realtime Database) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- ╔══════════════════════════════════════════════════════════╗
+       ║  SETUP INSTRUCTIONS — read before sharing              ║
+       ║                                                          ║
+       ║  1. Go to: console.firebase.google.com                  ║
+       ║  2. Create a project (any name)                          ║
+       ║  3. Build → Realtime Database → Create database          ║
+       ║     → choose region → Start in TEST MODE → Enable        ║
+       ║  4. Gear icon → Project settings → Your apps             ║
+       ║     → Add app → Web → Register (skip hosting)            ║
+       ║  5. Copy the firebaseConfig values below                 ║
+       ║  6. Save this file                                        ║
+       ║  7. Go to netlify.com/drop → drag this file in           ║
+       ║  8. Share the Netlify URL — everyone edits in real-time  ║
+       ╚══════════════════════════════════════════════════════════╝ -->
+  <script>
+    const firebaseConfig = {
+  apiKey: "AIzaSyDfrEphRv3oHlxp_sN--whtsH0nfR5Qjr4",
+  authDomain: "discover-product-led-growth.firebaseapp.com",
+  databaseURL: "https://discover-product-led-growth-default-rtdb.firebaseio.com",
+  projectId: "discover-product-led-growth",
+  storageBucket: "discover-product-led-growth.firebasestorage.app",
+  messagingSenderId: "932051000156",
+  appId: "1:932051000156:web:9c8e81e851bd726ae7bf99",
+  measurementId: "G-TXSJRW6W5D"
+};
+    const DEMO_MODE = false;
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* canvas */
+      --bg:       #E8EDF5;
+      --card:     #FFFFFF;
+      --border:   #DDE3EE;
+      --shadow:   0 1px 4px rgba(15,30,60,0.08), 0 0 0 1px rgba(15,30,60,0.04);
+
+      /* system colors */
+      --discover:       #1D4ED8;
+      --discover-muted: #DBEAFE;
+      --clay:           #A16207;
+      --clay-muted:     #FEF9C3;
+      --hubspot:        #C2410C;
+      --hubspot-muted:  #FFEDD5;
+      --scoring:        #6D28D9;
+      --scoring-muted:  #EDE9FE;
+      --routing:        #047857;
+      --routing-muted:  #D1FAE5;
+
+      /* wire / connector */
+      --wire:       #94A3B8;
+      --wire-light: #CBD5E1;
+
+      /* text */
+      --t1: #0F172A;
+      --t2: #475569;
+      --t3: #94A3B8;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: 'Lexend Deca', sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* dot-grid canvas feel */
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, #B8C4D8 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* ─── HEADER ─── */
+    .hdr {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hdr-left { display: flex; align-items: center; gap: 10px; }
+
+    .hdr-logo {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--t1);
+      letter-spacing: -0.02em;
+    }
+
+    .hdr-sep { color: var(--t3); }
+
+    .hdr-title {
+      font-size: 13px;
+      color: var(--t2);
+      font-weight: 400;
+    }
+
+    .hdr-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: var(--discover-muted);
+      color: var(--discover);
+      border: 1px solid #BFDBFE;
+      letter-spacing: 0.08em;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--t3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .leg-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .hdr-right { display: flex; align-items: center; gap: 8px; }
+
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      color: var(--t3);
+    }
+
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--t3);
+      transition: background 0.3s;
+    }
+    .live-dot.online  { background: #10B981; box-shadow: 0 0 5px rgba(16,185,129,0.4); }
+    .live-dot.demo    { background: #F59E0B; }
+    .live-dot.offline { background: #EF4444; }
+
+    .save-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 5px 12px;
+      border-radius: 5px;
+      background: var(--t1);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+    .save-btn:hover { background: #1e293b; }
+
+    /* ─── CANVAS ─── */
+    .canvas {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 44px 36px 100px;
+    }
+
+    /* ─── STEP LABEL ─── */
+    .step-lbl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--t3);
+    }
+    .step-lbl::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--wire-light);
+    }
+
+    /* ─── NODE CARD ─── */
+    .node {
+      background: var(--card);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      --accent: var(--t3);
+      --muted: #F8FAFC;
+    }
+
+    .node.discover { --accent: var(--discover); --muted: var(--discover-muted); }
+    .node.clay      { --accent: var(--clay);     --muted: var(--clay-muted); }
+    .node.hubspot   { --accent: var(--hubspot);  --muted: var(--hubspot-muted); }
+    .node.scoring   { --accent: var(--scoring);  --muted: var(--scoring-muted); }
+    .node.routing   { --accent: var(--routing);  --muted: var(--routing-muted); }
+
+    .node-stripe { height: 3px; background: var(--accent); }
+
+    .node-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .node-hd-left { display: flex; align-items: center; gap: 9px; }
+
+    .sys-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: var(--muted);
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      white-space: nowrap;
+    }
+
+    .node-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--t1);
+      letter-spacing: -0.01em;
+    }
+
+    .status-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .status-tag.ok   { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+    .status-tag.warn { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+
+    .node-body { padding: 14px 16px 16px; }
+
+    /* ─── CHIPS ─── */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--t2);
+      background: var(--muted);
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      transition: border-color 0.15s;
+    }
+    .chip:hover { border-color: var(--accent); }
+
+    .chip-type {
+      font-size: 8px;
+      color: var(--t3);
+      margin-left: 1px;
+    }
+
+    .chip-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── FIELD GROUP ─── */
+    .fg { margin-bottom: 12px; }
+    .fg:last-child { margin-bottom: 0; }
+
+    .fg-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 6px;
+    }
+
+    /* ─── NOTE BAR ─── */
+    .note-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--accent) 8%, white);
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      font-size: 11px;
+      color: var(--t2);
+    }
+    .note-icon { font-size: 12px; flex-shrink: 0; }
+
+    /* ─── TWO-COL ─── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ─── CONNECTORS ─── */
+    .conn { display: flex; flex-direction: column; align-items: center; padding: 2px 0; }
+
+    .conn-line {
+      width: 2px;
+      min-height: 28px;
+      background: var(--wire-light);
+      position: relative;
+      overflow: hidden;
+    }
+    .conn-line::after {
+      content: '';
+      position: absolute; top: -60%; left: 0; right: 0; height: 50%;
+      background: linear-gradient(to bottom, transparent, rgba(148,163,184,0.6), transparent);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0% { top: -60%; } 100% { top: 160%; } }
+
+    .conn-arrow {
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--wire);
+    }
+
+    /* fork: 1 stem → horizontal bar → 2 legs */
+    .fork-stem  { display: flex; justify-content: center; }
+    .fork-stem-line { width: 2px; height: 20px; background: var(--wire-light); }
+    .fork-bar   { height: 2px; background: var(--wire-light); margin: 0 25%; }
+    .fork-legs  { display: flex; justify-content: space-between; padding: 0 25%; }
+    .fork-leg   { width: 2px; height: 20px; background: var(--wire-light); }
+
+    /* merge: 2 legs → horizontal bar → 1 stem */
+    .merge-legs { display: flex; justify-content: space-between; padding: 0 25%; }
+    .merge-leg  { width: 2px; height: 20px; background: var(--wire-light); }
+    .merge-bar  { height: 2px; background: var(--wire-light); margin: 0 25%; }
+    .merge-stem { display: flex; justify-content: center; }
+    .merge-stem-line { width: 2px; height: 20px; background: var(--wire-light); }
+
+    /* ─── DECISION ROW (inside HubSpot node) ─── */
+    .decision-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .ds-branch {
+      padding: 10px 12px;
+      border-radius: 7px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+    }
+
+    .ds-branch-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+    .ds-branch-lbl.found  { color: #065F46; }
+    .ds-branch-lbl.create { color: var(--t3); }
+
+    .ds-branch-txt { font-size: 11px; color: var(--t2); }
+
+    /* ─── DEDUP BADGE ─── */
+    .dedup-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: var(--scoring-muted);
+      border: 1px solid #C4B5FD;
+      font-size: 11px;
+      color: #4C1D95;
+    }
+
+    /* ─── SCORE CARDS ─── */
+    .score-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .score-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .sc-title {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .sc-signal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--t2);
+    }
+    .sc-signal:last-of-type { border-bottom: none; }
+
+    .sc-weight {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+    }
+    .sc-weight.hi  { color: var(--scoring); }
+    .sc-weight.neg { color: #DC2626; }
+    .sc-weight.mid { color: var(--t3); }
+
+    /* ─── OPEN QUESTION (editable) ─── */
+    .open-q {
+      margin-top: 10px;
+      border: 1.5px dashed #FCD34D;
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .open-q:focus-within { border-color: #F59E0B; }
+
+    .oq-hd {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: #FFFBEB;
+      border-bottom: 1px solid #FEF3C7;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.06em;
+      color: #92400E;
+    }
+
+    .oq-body {
+      padding: 8px 10px;
+      background: #FFFDE7;
+    }
+
+    [contenteditable] { outline: none; }
+
+    .editable {
+      min-height: 40px;
+      font-size: 11px;
+      color: var(--t2);
+      font-family: 'Lexend Deca', sans-serif;
+      line-height: 1.6;
+      padding: 2px;
+      border-radius: 3px;
+      transition: background 0.15s;
+    }
+    .editable:focus { background: rgba(251,191,36,0.08); }
+    .editable:empty::before {
+      content: attr(data-ph);
+      color: var(--t3);
+      font-style: italic;
+      pointer-events: none;
+    }
+
+    /* ─── OUTPUT NOTE ─── */
+    .output-note {
+      margin-top: 12px;
+      padding: 9px 12px;
+      border-radius: 6px;
+      background: var(--scoring-muted);
+      border: 1px solid #C4B5FD;
+      font-size: 11px;
+      color: #4C1D95;
+    }
+    .output-note strong { color: #5B21B6; }
+
+    /* ─── ROUTING SECTION ─── */
+
+    /* Decision diamond (SVG-based, centered) */
+    .diamond-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 4px 0;
+    }
+
+    /* quad fork: 1 stem → bus → 4 legs */
+    .qf-stem  { display: flex; justify-content: center; }
+    .qf-stem-line { width: 2px; height: 20px; background: var(--wire-light); }
+    .qf-bar   { height: 2px; background: var(--wire-light); margin: 0 12.5%; }
+    .qf-legs  {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin: 0;
+    }
+    .qf-legs > div {
+      display: flex;
+      justify-content: center;
+    }
+    .qf-leg { width: 2px; height: 20px; background: var(--wire-light); }
+
+    /* 4-col routing grid */
+    .routing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .rb-card {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--card);
+      --rb-accent: var(--t3);
+      --rb-bg: #F8FAFC;
+    }
+    .rb-card.hot    { --rb-accent: #DC2626; --rb-bg: #FEF2F2; border-color: #FECACA; }
+    .rb-card.warm   { --rb-accent: var(--routing); --rb-bg: var(--routing-muted); border-color: #6EE7B7; }
+    .rb-card.nurture{ --rb-accent: #D97706; --rb-bg: #FFFBEB; border-color: #FDE68A; }
+    .rb-card.cold   { --rb-accent: #4B5563; --rb-bg: #F3F4F6; border-color: #D1D5DB; }
+
+    .rb-stripe { height: 3px; background: var(--rb-accent); }
+
+    .rb-trigger-bar {
+      padding: 8px 10px 6px;
+      background: var(--rb-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rb-letter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--rb-accent);
+      margin-bottom: 3px;
+      letter-spacing: 0.06em;
+    }
+
+    .rb-condition {
+      font-size: 10px;
+      color: var(--t2);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .rb-body { padding: 10px; }
+
+    .rb-outcome {
+      font-size: 11px;
+      color: var(--t2);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .rb-detail { font-size: 10px; color: var(--t3); line-height: 1.4; }
+
+    /* ─── PLACEHOLDER FILL BOX ─── */
+    .ph-box {
+      margin-top: 6px;
+      border: 1.5px dashed #FCD34D;
+      border-radius: 5px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .ph-box:focus-within { border-color: #F59E0B; }
+
+    .ph-hd {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 7px;
+      background: #FFFBEB;
+      border-bottom: 1px solid #FEF3C7;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5px;
+      letter-spacing: 0.06em;
+      color: #92400E;
+    }
+
+    .ph-body { padding: 6px 7px; background: #FFFDE7; }
+
+    .ph-editable {
+      min-height: 36px;
+      font-size: 10px;
+      color: var(--t2);
+      line-height: 1.5;
+      padding: 2px;
+    }
+
+    /* ─── ASSIGNMENT CARDS ─── */
+    .assign-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .assign-card {
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      background: #F8FAFC;
+    }
+    .assign-card.found { background: var(--routing-muted); border-color: #6EE7B7; }
+
+    .ac-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .ac-lbl.found { color: #065F46; }
+    .ac-lbl.none  { color: var(--t3); }
+
+    .ac-body {
+      font-size: 11px;
+      color: var(--t2);
+      line-height: 1.5;
+    }
+    .ac-body strong { color: var(--t1); font-weight: 600; }
+
+    /* ─── merge partial (only A+B1 lead to SDR) ─── */
+    .partial-merge {
+      display: flex;
+      justify-content: center;
+    }
+    .partial-merge-inner {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .partial-merge-bar {
+      width: 100%;
+      height: 2px;
+      background: var(--wire-light);
+      margin: 0 25%;
+    }
+    .partial-merge-stem {
+      width: 2px;
+      height: 20px;
+      background: var(--wire-light);
+    }
+
+    /* ─── SAVE TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      padding: 8px 14px;
+      background: var(--t1);
+      color: #fff;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 640px) {
+      .two-col, .score-pair, .assign-grid { grid-template-columns: 1fr; }
+      .routing-grid { grid-template-columns: 1fr 1fr; }
+      .canvas { padding: 28px 18px 80px; }
+      .legend { display: none; }
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: var(--wire-light); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-logo">GovDash</span>
+    <span class="hdr-sep">·</span>
+    <span class="hdr-title">Discover → PLS Data Flow</span>
+    <span class="hdr-tag">v0.1 DRAFT</span>
+  </div>
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:#1D4ED8"></span>Discover</span>
+    <span class="leg"><span class="leg-dot" style="background:#A16207"></span>Clay</span>
+    <span class="leg"><span class="leg-dot" style="background:#C2410C"></span>HubSpot</span>
+    <span class="leg"><span class="leg-dot" style="background:#6D28D9"></span>Scoring</span>
+    <span class="leg"><span class="leg-dot" style="background:#047857"></span>Routing</span>
+  </div>
+  <div class="hdr-right">
+    <div class="live-pill">
+      <span class="live-dot" id="liveDot"></span>
+      <span id="liveLabel">Initializing…</span>
+    </div>
+    <button class="save-btn" onclick="saveAll()">Save ⌘S</button>
+  </div>
+</header>
+
+
+<!-- ─── CANVAS ─── -->
+<div class="canvas">
+
+
+  <!-- ══ STEP 1 ══ -->
+  <div class="step-lbl">Step 1 — User Account Creation</div>
+
+  <div class="node discover">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">DISCOVER</span>
+        <span class="node-title">GovDash Discover — New User Signup</span>
+      </div>
+      <span class="status-tag ok">✓ Defined</span>
+    </div>
+    <div class="node-body">
+      <div class="fg-lbl">Captured at signup</div>
+      <div class="chips">
+        <span class="chip"><span class="chip-dot"></span>User ID <span class="chip-type">string</span></span>
+        <span class="chip"><span class="chip-dot"></span>First Name <span class="chip-type">string</span></span>
+        <span class="chip"><span class="chip-dot"></span>Last Name <span class="chip-type">string</span></span>
+        <span class="chip"><span class="chip-dot"></span>Email <span class="chip-type">email</span></span>
+      </div>
+      <div class="note-bar">
+        <span class="note-icon">ℹ</span>
+        <span>These 4 fields trigger the Clay enrichment pipeline. All other data appended downstream.</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FORK: 1 → 2 (Clay tables run in parallel) -->
+  <div class="fork-stem"><div class="fork-stem-line"></div></div>
+  <div class="fork-bar"></div>
+  <div class="fork-legs"><div class="fork-leg"></div><div class="fork-leg"></div></div>
+
+
+  <!-- ══ STEP 2 ══ -->
+  <div class="step-lbl">Step 2 — Clay Enrichment (runs in parallel)</div>
+
+  <div class="two-col">
+
+    <div class="node clay">
+      <div class="node-stripe"></div>
+      <div class="node-hd">
+        <div class="node-hd-left">
+          <span class="sys-badge">CLAY</span>
+          <span class="node-title">Contact Enrichment Table</span>
+        </div>
+        <span class="status-tag ok">✓ Defined</span>
+      </div>
+      <div class="node-body">
+        <div class="fg">
+          <div class="fg-lbl">Input</div>
+          <div class="chips">
+            <span class="chip" style="opacity:0.55"><span class="chip-dot" style="background:var(--clay)"></span>Email (from Discover)</span>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="fg-lbl">Enriched fields</div>
+          <div class="chips">
+            <span class="chip"><span class="chip-dot"></span>Job Title <span class="chip-type">string</span></span>
+            <span class="chip"><span class="chip-dot"></span>LinkedIn URL <span class="chip-type">url</span></span>
+            <span class="chip"><span class="chip-dot"></span>Phone Number <span class="chip-type">phone</span></span>
+            <span class="chip"><span class="chip-dot"></span>Current Company Name <span class="chip-type">string</span></span>
+          </div>
+        </div>
+        <div class="note-bar">
+          <span class="note-icon">→</span>
+          <span><strong>Company Name</strong> triggers the Company Enrichment table in parallel.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="node clay">
+      <div class="node-stripe"></div>
+      <div class="node-hd">
+        <div class="node-hd-left">
+          <span class="sys-badge">CLAY</span>
+          <span class="node-title">Company Enrichment Table</span>
+        </div>
+        <span class="status-tag ok">✓ Defined</span>
+      </div>
+      <div class="node-body">
+        <div class="fg">
+          <div class="fg-lbl">Input (from Contact table)</div>
+          <div class="chips">
+            <span class="chip" style="opacity:0.55"><span class="chip-dot" style="background:var(--clay)"></span>Company Name</span>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="fg-lbl">Enriched fields</div>
+          <div class="chips">
+            <span class="chip"><span class="chip-dot"></span>Company Domain <span class="chip-type">url</span></span>
+            <span class="chip"><span class="chip-dot"></span>UEI <span class="chip-type">string</span></span>
+            <span class="chip"><span class="chip-dot"></span>Legal Business Name <span class="chip-type">string</span></span>
+            <span class="chip"><span class="chip-dot"></span>Commercial Revenue <span class="chip-type">range</span></span>
+            <span class="chip"><span class="chip-dot"></span>Employee Count <span class="chip-type">range</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /two-col -->
+
+
+  <!-- MERGE: 2 → 1 -->
+  <div class="merge-legs"><div class="merge-leg"></div><div class="merge-leg"></div></div>
+  <div class="merge-bar"></div>
+  <div class="merge-stem"><div class="merge-stem-line"></div></div>
+  <div class="conn"><div class="conn-arrow"></div></div>
+
+
+  <!-- ══ STEPS 3+4 ══ -->
+  <div class="step-lbl">Steps 3 & 4 — HubSpot Match, Sync & Deduplication</div>
+
+  <div class="node hubspot">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">HUBSPOT</span>
+        <span class="node-title">Match Record → Update or Create → Deduplicate</span>
+      </div>
+      <span class="status-tag ok">✓ Defined</span>
+    </div>
+    <div class="node-body">
+      <div class="two-col" style="gap:10px">
+        <div>
+          <div class="fg-lbl" style="margin-bottom:6px">Contact — Record exists?</div>
+          <div class="decision-split">
+            <div class="ds-branch">
+              <div class="ds-branch-lbl found">✓ Found</div>
+              <div class="ds-branch-txt">Update contact with enriched data</div>
+            </div>
+            <div class="ds-branch">
+              <div class="ds-branch-lbl create">✕ Not found</div>
+              <div class="ds-branch-txt">Create new contact record</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="fg-lbl" style="margin-bottom:6px">Company — Record exists?</div>
+          <div class="decision-split">
+            <div class="ds-branch">
+              <div class="ds-branch-lbl found">✓ Found</div>
+              <div class="ds-branch-txt">Update company with enriched data</div>
+            </div>
+            <div class="ds-branch">
+              <div class="ds-branch-lbl create">✕ Not found</div>
+              <div class="ds-branch-txt">Create new company record</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dedup-badge">
+        <span>🔀</span>
+        <span><strong>Deduplication</strong> — match on email (exact) + company domain (fuzzy). Merge before write. Link contact → company.</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- CONNECTOR -->
+  <div class="conn">
+    <div class="conn-line"></div>
+    <div class="conn-arrow"></div>
+  </div>
+
+
+  <!-- ══ STEP 5 ══ -->
+  <div class="step-lbl">Step 5 — Engagement Event Tracking in HubSpot</div>
+
+  <div class="node hubspot">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">HUBSPOT</span>
+        <span class="node-title">Discover Engagement Properties — synced in real-time</span>
+      </div>
+      <span class="status-tag ok">✓ Defined</span>
+    </div>
+    <div class="node-body">
+      <div class="two-col">
+        <div class="fg">
+          <div class="fg-lbl">⏱ Recency signals</div>
+          <div class="chips">
+            <span class="chip"><span class="chip-dot"></span>Created At <span class="chip-type">datetime</span></span>
+            <span class="chip"><span class="chip-dot"></span>Last Login At <span class="chip-type">datetime</span></span>
+          </div>
+          <div style="font-size:10px;color:var(--t3);margin-top:5px">Used to weight recency in intent score</div>
+        </div>
+        <div class="fg">
+          <div class="fg-lbl">📊 Activity signals (intent score inputs)</div>
+          <div class="chips">
+            <span class="chip"><span class="chip-dot"></span>Total Solic. Likes <span class="chip-type">number</span></span>
+            <span class="chip"><span class="chip-dot"></span>Total Solic. Dislikes <span class="chip-type">number</span></span>
+            <span class="chip"><span class="chip-dot"></span>Total Solic. Clicks <span class="chip-type">number</span></span>
+            <span class="chip"><span class="chip-dot"></span>Total Solic. Add to Pipeline <span class="chip-type">number</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- CONNECTOR -->
+  <div class="conn">
+    <div class="conn-line"></div>
+    <div class="conn-arrow"></div>
+  </div>
+
+
+  <!-- ══ STEP 6 ══ -->
+  <div class="step-lbl">Step 6 — Lead Scoring Engine</div>
+
+  <div class="node scoring">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">SCORING</span>
+        <span class="node-title">Lead Score = Fit Score + Intent Score</span>
+      </div>
+      <span class="status-tag warn">⚠ Thresholds TBD</span>
+    </div>
+    <div class="node-body">
+      <div class="score-pair">
+
+        <div class="score-card">
+          <div class="sc-title">Fit Score</div>
+          <div class="sc-signal">
+            <span>TTM Federal Revenue</span>
+            <span class="sc-weight hi">Primary gate</span>
+          </div>
+          <div class="sc-signal">
+            <span>Employee Count Range</span>
+            <span class="sc-weight mid">Supporting</span>
+          </div>
+          <div class="sc-signal">
+            <span>Commercial Revenue Range</span>
+            <span class="sc-weight mid">Supporting</span>
+          </div>
+          <div class="open-q">
+            <div class="oq-hd">❓ Open — Define ICP thresholds</div>
+            <div class="oq-body">
+              <div class="editable" contenteditable="true" data-key="fit-thresholds"
+                data-ph="E.g., TTM Federal Revenue ≥ $X, headcount 50–5,000… Click to define."></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-card">
+          <div class="sc-title">Intent Score</div>
+          <div class="sc-signal">
+            <span>Add to Pipeline count</span>
+            <span class="sc-weight hi">High weight</span>
+          </div>
+          <div class="sc-signal">
+            <span>Click count</span>
+            <span class="sc-weight mid">Med-high</span>
+          </div>
+          <div class="sc-signal">
+            <span>Like count</span>
+            <span class="sc-weight mid">Medium</span>
+          </div>
+          <div class="sc-signal">
+            <span>Last Login recency</span>
+            <span class="sc-weight hi">Recency boost</span>
+          </div>
+          <div class="sc-signal">
+            <span>Dislike count</span>
+            <span class="sc-weight neg">Negative</span>
+          </div>
+          <div class="open-q">
+            <div class="oq-hd">❓ Open — Define weights + threshold</div>
+            <div class="oq-body">
+              <div class="editable" contenteditable="true" data-key="intent-weights"
+                data-ph="E.g., Add to Pipeline = 5 pts, Click = 2, Like = 1, Dislike = −1. Route threshold = 15 pts."></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="output-note">
+        <strong>Output:</strong> Fit Score → ICP or Non-ICP &nbsp;·&nbsp; Intent Score → 0–100 &nbsp;·&nbsp; Combined tier determines routing below
+      </div>
+    </div>
+  </div>
+
+
+  <!-- CONNECTOR -->
+  <div class="conn">
+    <div class="conn-line"></div>
+    <div class="conn-arrow"></div>
+  </div>
+
+
+  <!-- ══ STEP 7 ══ -->
+  <div class="step-lbl">Step 7 — Lead Routing Decision</div>
+
+  <!-- Routing diamond -->
+  <div class="diamond-wrap">
+    <svg width="140" height="64" viewBox="0 0 140 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="70,4 136,32 70,60 4,32"
+               fill="#D1FAE5" stroke="#047857" stroke-width="1.5"/>
+      <text x="70" y="28" text-anchor="middle"
+            font-family="Lexend Deca, sans-serif" font-size="10" font-weight="600"
+            fill="#065F46">Route Lead?</text>
+      <text x="70" y="42" text-anchor="middle"
+            font-family="JetBrains Mono, monospace" font-size="8"
+            fill="#047857">2 triggers</text>
+    </svg>
+  </div>
+
+  <!-- Quad fork: diamond → 4 routing cards -->
+  <div class="qf-stem"><div class="qf-stem-line"></div></div>
+  <div class="qf-bar"></div>
+  <div class="qf-legs">
+    <div><div class="qf-leg"></div></div>
+    <div><div class="qf-leg"></div></div>
+    <div><div class="qf-leg"></div></div>
+    <div><div class="qf-leg"></div></div>
+  </div>
+
+  <!-- 4 routing outcome cards -->
+  <div class="routing-grid">
+
+    <!-- A: Talk to Sales CTA -->
+    <div class="rb-card hot">
+      <div class="rb-stripe"></div>
+      <div class="rb-trigger-bar">
+        <div class="rb-letter">A · TRIGGER</div>
+        <div class="rb-condition">CTA: "Talk to Sales"</div>
+      </div>
+      <div class="rb-body">
+        <div class="rb-outcome">Immediate Outreach</div>
+        <div class="rb-detail">Auto-email from CRM or RevenueHero booking link. No score check needed.</div>
+      </div>
+    </div>
+
+    <!-- B1: ICP + High Intent -->
+    <div class="rb-card warm">
+      <div class="rb-stripe"></div>
+      <div class="rb-trigger-bar">
+        <div class="rb-letter">B1 · SCORE</div>
+        <div class="rb-condition">ICP + Intent ≥ threshold</div>
+      </div>
+      <div class="rb-body">
+        <div class="rb-outcome">Route to Sales</div>
+        <div class="rb-detail">Passes to SDR/AE Assignment (Step 8 ↓)</div>
+      </div>
+    </div>
+
+    <!-- B2: ICP + Low Intent — PLACEHOLDER -->
+    <div class="rb-card nurture">
+      <div class="rb-stripe"></div>
+      <div class="rb-trigger-bar">
+        <div class="rb-letter">B2 · SCORE</div>
+        <div class="rb-condition">ICP + Intent &lt; threshold</div>
+      </div>
+      <div class="rb-body">
+        <div class="rb-outcome">Nurture</div>
+        <div class="ph-box">
+          <div class="ph-hd">📝 Marketing to define</div>
+          <div class="ph-body">
+            <div class="ph-editable editable" contenteditable="true" data-key="nurture-strategy"
+              data-ph="E.g., drip email, retargeting audience, monthly digest… Click to fill in."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Non-ICP — PLACEHOLDER -->
+    <div class="rb-card cold">
+      <div class="rb-stripe"></div>
+      <div class="rb-trigger-bar">
+        <div class="rb-letter">C · FIT</div>
+        <div class="rb-condition">Non-ICP</div>
+      </div>
+      <div class="rb-body">
+        <div class="rb-outcome">Park / Educate</div>
+        <div class="ph-box">
+          <div class="ph-hd">📝 Marketing to define</div>
+          <div class="ph-body">
+            <div class="ph-editable editable" contenteditable="true" data-key="park-strategy"
+              data-ph="E.g., product newsletter, community access, no outreach… Click to fill in."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /routing-grid -->
+
+
+  <!-- Partial merge: only A + B1 (first 2 columns) lead to SDR -->
+  <div style="display:flex;align-items:flex-end;height:32px;gap:8px;padding:0">
+    <!-- legs under A and B1 only (left 50% of the 4-col grid) -->
+    <div style="width:50%;display:flex;justify-content:space-between;padding:0 12.5%">
+      <div style="width:2px;height:32px;background:var(--wire-light)"></div>
+      <div style="width:2px;height:32px;background:var(--wire-light)"></div>
+    </div>
+    <!-- right 50% has no legs (B2 and C terminate above) -->
+    <div style="width:50%"></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <div style="width:50%;position:relative">
+      <div style="position:absolute;top:0;left:12.5%;right:12.5%;height:2px;background:var(--wire-light)"></div>
+      <div style="display:flex;justify-content:center;padding-top:2px">
+        <div style="width:2px;height:18px;background:var(--wire-light)"></div>
+      </div>
+    </div>
+    <div style="width:50%"></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <div style="width:50%;display:flex;justify-content:center">
+      <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--wire)"></div>
+    </div>
+    <div style="width:50%"></div>
+  </div>
+
+
+  <!-- ══ STEP 8 ══ -->
+  <div class="step-lbl" style="width:50%">Step 8 — SDR / AE Assignment</div>
+
+  <div style="width:50%">
+    <div class="node routing">
+      <div class="node-stripe"></div>
+      <div class="node-hd">
+        <div class="node-hd-left">
+          <span class="sys-badge">ROUTING</span>
+          <span class="node-title">SDR / AE Assignment</span>
+        </div>
+        <span class="status-tag ok">✓ Defined</span>
+      </div>
+      <div class="node-body">
+        <div class="assign-grid">
+          <div class="assign-card found">
+            <div class="ac-lbl found">✓ Existing owner found</div>
+            <div class="ac-body"><strong>Notify via Slack</strong> — ping existing SDR/AE: "New Discover user at [Company]."</div>
+          </div>
+          <div class="assign-card">
+            <div class="ac-lbl none">No previous owner</div>
+            <div class="ac-body"><strong>Round Robin</strong> → assign next SDR. Set ownership on contact + company.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- /canvas -->
+
+
+<div class="toast" id="toast">✓ Saved</div>
+
+
+<script>
+  function setStatus(state, label) {
+    document.getElementById('liveDot').className = 'live-dot ' + state;
+    document.getElementById('liveLabel').textContent = label;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || '✓ Saved';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  if (DEMO_MODE) {
+    setStatus('demo', 'Local only — add Firebase to sync');
+
+    function saveAll() {
+      const data = {};
+      document.querySelectorAll('[data-key]').forEach(el => {
+        data[el.dataset.key] = el.innerHTML;
+      });
+      localStorage.setItem('pls-flow-v1', JSON.stringify(data));
+      showToast('✓ Saved locally');
+    }
+
+    (function loadAll() {
+      try {
+        const raw = localStorage.getItem('pls-flow-v1');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        document.querySelectorAll('[data-key]').forEach(el => {
+          if (data[el.dataset.key]) el.innerHTML = data[el.dataset.key];
+        });
+      } catch(e) {}
+    })();
+
+    let t;
+    document.addEventListener('input', e => {
+      if (e.target.dataset.key) { clearTimeout(t); t = setTimeout(saveAll, 800); }
+    });
+
+  } else {
+    firebase.initializeApp(firebaseConfig);
+    const db  = firebase.database();
+    const REF = db.ref('pls-flow/fields');
+
+    firebase.database().ref('.info/connected').on('value', snap => {
+      setStatus(snap.val() ? 'online' : 'offline', snap.val() ? 'Live — syncing' : 'Reconnecting…');
+    });
+
+    REF.once('value', snap => {
+      const data = snap.val() || {};
+      document.querySelectorAll('[data-key]').forEach(el => {
+        if (data[el.dataset.key]) el.innerHTML = data[el.dataset.key];
+      });
+    });
+
+    REF.on('child_changed', snap => {
+      document.querySelectorAll(`[data-key="${snap.key}"]`).forEach(el => {
+        if (document.activeElement !== el) el.innerHTML = snap.val() || '';
+      });
+    });
+
+    const pending = {};
+    document.addEventListener('input', e => {
+      if (!e.target.dataset.key) return;
+      const key = e.target.dataset.key;
+      clearTimeout(pending[key]);
+      pending[key] = setTimeout(() => {
+        REF.child(key).set(e.target.innerHTML);
+        showToast('✓ Synced');
+      }, 600);
+    });
+
+    function saveAll() {
+      const updates = {};
+      document.querySelectorAll('[data-key]').forEach(el => { updates[el.dataset.key] = el.innerHTML; });
+      REF.update(updates).then(() => showToast('✓ All fields saved'));
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveAll(); }
+  });
+</script>
+</body>
+</html>
