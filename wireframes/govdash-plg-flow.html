@@ -976,20 +976,20 @@
       // Label on the vertical section
       const lx = rail + 5;
       const ly = (y0 + entryY) / 2;
-      const lw = label.length * 5.5 + 8;
+      const lw = label.length * 7.2 + 12;
 
       const bg = document.createElementNS(ns, 'rect');
-      bg.setAttribute('x', lx); bg.setAttribute('y', ly - 7);
-      bg.setAttribute('width', lw); bg.setAttribute('height', 13);
-      bg.setAttribute('rx', 3); bg.setAttribute('fill', '#fff');
+      bg.setAttribute('x', lx); bg.setAttribute('y', ly - 9);
+      bg.setAttribute('width', lw); bg.setAttribute('height', 18);
+      bg.setAttribute('rx', 4); bg.setAttribute('fill', '#fff');
       bg.setAttribute('opacity', '0.92');
       svg.appendChild(bg);
 
       const txt = document.createElementNS(ns, 'text');
-      txt.setAttribute('x', lx + lw / 2); txt.setAttribute('y', ly + 4);
+      txt.setAttribute('x', lx + lw / 2); txt.setAttribute('y', ly + 5);
       txt.setAttribute('text-anchor', 'middle');
       txt.setAttribute('fill', color);
-      txt.setAttribute('font-size', '7');
+      txt.setAttribute('font-size', '10');
       txt.setAttribute('font-family', "'JetBrains Mono', monospace");
       txt.setAttribute('font-weight', '600');
       txt.setAttribute('letter-spacing', '0.04em');
