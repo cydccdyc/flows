@@ -248,6 +248,7 @@
     /* B1/B2 pair — flex so align-items:stretch works */
     .b-pair { flex: 1; display: flex; gap: 8px; align-items: stretch; }
     .b-pair-col { flex: 1; display: flex; flex-direction: column; }
+    .b-pair-col .sub-card { flex: 1; }
 
     /* Level-2 sub-cards */
     .sub-card { border-radius: 8px; border: 1px solid var(--border); overflow: hidden; background: var(--card); --sub-accent: var(--t3); --sub-bg: #F8FAFC; }
@@ -654,8 +655,6 @@
               <div class="goto-badge to-step" style="margin-top:10px">→ Goes to Step 7 ↓</div>
             </div>
           </div>
-          <!-- B1 leg fills remaining height to match B2 -->
-          <div class="col-leg"><div class="col-leg-line"></div></div>
         </div>
 
         <!-- B2: Low Intent -->
@@ -691,6 +690,11 @@
         </div>
 
       </div><!-- /b-pair -->
+      <!-- B1 downward connector: left half of b-group, fills remaining height after cards -->
+      <div style="flex:1;display:flex">
+        <div class="col-leg" style="flex:1"><div class="col-leg-line"></div></div>
+        <div style="flex:1"></div>
+      </div>
     </div><!-- /b-group -->
 
     <!-- ── C: Non-ICP — Educate ── -->
