@@ -193,7 +193,7 @@
 
     /* ─── CANVAS ─── */
     .canvas {
-      max-width: 820px;
+      max-width: 1060px;
       margin: 0 auto;
       padding: 44px 36px 100px;
     }
@@ -386,6 +386,14 @@
     .merge-stem { display: flex; justify-content: center; }
     .merge-stem-line { width: 2px; height: 20px; background: var(--wire-light); }
 
+    /* triple fork: 1 stem → bus → 3 legs */
+    .tf-stem { display: flex; justify-content: center; }
+    .tf-stem-line { width: 2px; height: 20px; background: var(--wire-light); }
+    .tf-bar { height: 2px; background: var(--wire-light); margin: 0 16.67%; }
+    .tf-legs { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .tf-legs > div { display: flex; justify-content: center; }
+    .tf-leg { width: 2px; height: 20px; background: var(--wire-light); }
+
     /* ─── DECISION ROW (inside HubSpot node) ─── */
     .decision-split {
       display: grid;
@@ -527,6 +535,79 @@
     }
     .output-note strong { color: #5B21B6; }
 
+    /* ─── SIDEBAR LAYOUT ─── */
+    .main-with-sidebar {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .main-flow-col {
+      flex: 1;
+      min-width: 0;
+    }
+    .scoring-sidebar {
+      width: 290px;
+      flex-shrink: 0;
+    }
+    .sidebar-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--scoring);
+      padding: 8px 12px;
+      background: var(--scoring-muted);
+      border: 1px solid #C4B5FD;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sidebar-panel {
+      background: var(--card);
+      border: 1px solid #C4B5FD;
+      border-top: none;
+      overflow: hidden;
+    }
+    .sidebar-panel:last-child {
+      border-radius: 0 0 8px 8px;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: #E9D5FF;
+      margin: 0 12px;
+    }
+    .sidebar-panel .node-hd {
+      padding: 9px 12px 8px;
+    }
+    .sidebar-panel .node-body {
+      padding: 10px 12px 12px;
+    }
+    .sidebar-panel .node-title {
+      font-size: 11px;
+    }
+    .sidebar-panel .chip {
+      font-size: 9px;
+      padding: 2px 6px;
+    }
+    .sidebar-panel .sc-signal {
+      font-size: 10px;
+    }
+    .sidebar-panel .score-pair {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .sidebar-panel .score-card {
+      padding: 10px 12px;
+    }
+    .sidebar-panel .output-note {
+      font-size: 10px;
+      padding: 7px 10px;
+    }
+    .sidebar-panel .open-q { margin-top: 8px; }
+    .sidebar-panel .oq-hd { font-size: 7.5px; }
+    .sidebar-panel .editable { min-height: 32px; font-size: 10px; }
+
     /* ─── ROUTING SECTION ─── */
 
     /* Decision diamond (SVG-based, centered) */
@@ -536,25 +617,10 @@
       padding: 4px 0;
     }
 
-    /* quad fork: 1 stem → bus → 4 legs */
-    .qf-stem  { display: flex; justify-content: center; }
-    .qf-stem-line { width: 2px; height: 20px; background: var(--wire-light); }
-    .qf-bar   { height: 2px; background: var(--wire-light); margin: 0 12.5%; }
-    .qf-legs  {
+    /* 3-col routing grid */
+    .routing-grid-3 {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      margin: 0;
-    }
-    .qf-legs > div {
-      display: flex;
-      justify-content: center;
-    }
-    .qf-leg { width: 2px; height: 20px; background: var(--wire-light); }
-
-    /* 4-col routing grid */
-    .routing-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
 
@@ -568,7 +634,6 @@
     }
     .rb-card.hot    { --rb-accent: #DC2626; --rb-bg: #FEF2F2; border-color: #FECACA; }
     .rb-card.warm   { --rb-accent: var(--routing); --rb-bg: var(--routing-muted); border-color: #6EE7B7; }
-    .rb-card.nurture{ --rb-accent: #D97706; --rb-bg: #FFFBEB; border-color: #FDE68A; }
     .rb-card.cold   { --rb-accent: #4B5563; --rb-bg: #F3F4F6; border-color: #D1D5DB; }
 
     .rb-stripe { height: 3px; background: var(--rb-accent); }
@@ -606,6 +671,47 @@
 
     .rb-detail { font-size: 10px; color: var(--t3); line-height: 1.4; }
 
+    /* ─── B sub-fork (inside B card) ─── */
+    .b-sub-fork { padding: 6px 0 2px; }
+    .b-sub-fork-stem { display: flex; justify-content: center; }
+    .b-sub-fork-stem-line { width: 2px; height: 10px; background: var(--wire-light); }
+    .b-sub-fork-bar { height: 2px; background: var(--wire-light); margin: 0 18%; }
+    .b-sub-fork-legs { display: flex; justify-content: space-between; padding: 0 18%; }
+    .b-sub-fork-leg { width: 2px; height: 10px; background: var(--wire-light); }
+
+    /* ─── B sub-cards ─── */
+    .b-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .b-sub-card {
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      padding: 9px 10px;
+    }
+    .b-sub-card.b1 { background: var(--routing-muted); border-color: #6EE7B7; }
+    .b-sub-card.b2 { background: #FFFBEB; border-color: #FDE68A; }
+
+    .b-sub-letter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .b-sub-card.b1 .b-sub-letter { color: var(--routing); }
+    .b-sub-card.b2 .b-sub-letter { color: #D97706; }
+
+    .b-sub-condition {
+      font-size: 10px;
+      color: var(--t2);
+      font-weight: 500;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .b-sub-note {
+      font-size: 10px;
+      color: var(--t3);
+      line-height: 1.4;
+    }
+
     /* ─── PLACEHOLDER FILL BOX ─── */
     .ph-box {
       margin-top: 6px;
@@ -637,6 +743,54 @@
       color: var(--t2);
       line-height: 1.5;
       padding: 2px;
+    }
+
+    /* ─── C loop-back indicator ─── */
+    .loop-back {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: rgba(75,85,99,0.05);
+      border: 1.5px dashed #9CA3AF;
+      font-size: 10px;
+      color: #4B5563;
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      line-height: 1.4;
+    }
+    .loop-icon { font-size: 13px; flex-shrink: 0; margin-top: -1px; }
+
+    /* C email cadence list */
+    .email-cadence {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .email-step {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10px;
+      color: var(--t2);
+    }
+    .email-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 600;
+      color: #4B5563;
+      background: #E5E7EB;
+      border-radius: 3px;
+      padding: 1px 5px;
+      flex-shrink: 0;
+    }
+    .email-sep {
+      font-size: 9px;
+      color: var(--t3);
+      text-align: center;
+      padding-left: 22px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* ─── ASSIGNMENT CARDS ─── */
@@ -671,29 +825,6 @@
     }
     .ac-body strong { color: var(--t1); font-weight: 600; }
 
-    /* ─── merge partial (only A+B1 lead to SDR) ─── */
-    .partial-merge {
-      display: flex;
-      justify-content: center;
-    }
-    .partial-merge-inner {
-      width: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .partial-merge-bar {
-      width: 100%;
-      height: 2px;
-      background: var(--wire-light);
-      margin: 0 25%;
-    }
-    .partial-merge-stem {
-      width: 2px;
-      height: 20px;
-      background: var(--wire-light);
-    }
-
     /* ─── SAVE TOAST ─── */
     .toast {
       position: fixed;
@@ -713,9 +844,11 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
+      .main-with-sidebar { flex-direction: column; }
+      .scoring-sidebar { width: 100%; }
       .two-col, .score-pair, .assign-grid { grid-template-columns: 1fr; }
-      .routing-grid { grid-template-columns: 1fr 1fr; }
+      .routing-grid-3 { grid-template-columns: 1fr; }
       .canvas { padding: 28px 18px 80px; }
       .legend { display: none; }
     }
@@ -733,7 +866,7 @@
     <span class="hdr-logo">GovDash</span>
     <span class="hdr-sep">·</span>
     <span class="hdr-title">Discover → PLS Data Flow</span>
-    <span class="hdr-tag">v0.1 DRAFT</span>
+    <span class="hdr-tag">v0.2 DRAFT</span>
   </div>
   <div class="legend">
     <span class="leg"><span class="leg-dot" style="background:#1D4ED8"></span>Discover</span>
@@ -866,187 +999,159 @@
   <div class="conn"><div class="conn-arrow"></div></div>
 
 
-  <!-- ══ STEPS 3+4 ══ -->
-  <div class="step-lbl">Steps 3 & 4 — HubSpot Match, Sync & Deduplication</div>
+  <!-- ══ STEPS 3+4 with Scoring Sidebar ══ -->
+  <div class="main-with-sidebar">
 
-  <div class="node hubspot">
-    <div class="node-stripe"></div>
-    <div class="node-hd">
-      <div class="node-hd-left">
-        <span class="sys-badge">HUBSPOT</span>
-        <span class="node-title">Match Record → Update or Create → Deduplicate</span>
-      </div>
-      <span class="status-tag ok">✓ Defined</span>
-    </div>
-    <div class="node-body">
-      <div class="two-col" style="gap:10px">
-        <div>
-          <div class="fg-lbl" style="margin-bottom:6px">Contact — Record exists?</div>
-          <div class="decision-split">
-            <div class="ds-branch">
-              <div class="ds-branch-lbl found">✓ Found</div>
-              <div class="ds-branch-txt">Update contact with enriched data</div>
+    <!-- Main flow column -->
+    <div class="main-flow-col">
+
+      <div class="step-lbl">Steps 3 & 4 — HubSpot Match, Sync & Deduplication</div>
+
+      <div class="node hubspot">
+        <div class="node-stripe"></div>
+        <div class="node-hd">
+          <div class="node-hd-left">
+            <span class="sys-badge">HUBSPOT</span>
+            <span class="node-title">Match Record → Update or Create → Deduplicate</span>
+          </div>
+          <span class="status-tag ok">✓ Defined</span>
+        </div>
+        <div class="node-body">
+          <div class="two-col" style="gap:10px">
+            <div>
+              <div class="fg-lbl" style="margin-bottom:6px">Contact — Record exists?</div>
+              <div class="decision-split">
+                <div class="ds-branch">
+                  <div class="ds-branch-lbl found">✓ Found</div>
+                  <div class="ds-branch-txt">Update contact with enriched data</div>
+                </div>
+                <div class="ds-branch">
+                  <div class="ds-branch-lbl create">✕ Not found</div>
+                  <div class="ds-branch-txt">Create new contact record</div>
+                </div>
+              </div>
             </div>
-            <div class="ds-branch">
-              <div class="ds-branch-lbl create">✕ Not found</div>
-              <div class="ds-branch-txt">Create new contact record</div>
+            <div>
+              <div class="fg-lbl" style="margin-bottom:6px">Company — Record exists?</div>
+              <div class="decision-split">
+                <div class="ds-branch">
+                  <div class="ds-branch-lbl found">✓ Found</div>
+                  <div class="ds-branch-txt">Update company with enriched data</div>
+                </div>
+                <div class="ds-branch">
+                  <div class="ds-branch-lbl create">✕ Not found</div>
+                  <div class="ds-branch-txt">Create new company record</div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-          <div class="fg-lbl" style="margin-bottom:6px">Company — Record exists?</div>
-          <div class="decision-split">
-            <div class="ds-branch">
-              <div class="ds-branch-lbl found">✓ Found</div>
-              <div class="ds-branch-txt">Update company with enriched data</div>
-            </div>
-            <div class="ds-branch">
-              <div class="ds-branch-lbl create">✕ Not found</div>
-              <div class="ds-branch-txt">Create new company record</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="dedup-badge">
-        <span>🔀</span>
-        <span><strong>Deduplication</strong> — match on email (exact) + company domain (fuzzy). Merge before write. Link contact → company.</span>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- CONNECTOR -->
-  <div class="conn">
-    <div class="conn-line"></div>
-    <div class="conn-arrow"></div>
-  </div>
-
-
-  <!-- ══ STEP 5 ══ -->
-  <div class="step-lbl">Step 5 — Engagement Event Tracking in HubSpot</div>
-
-  <div class="node hubspot">
-    <div class="node-stripe"></div>
-    <div class="node-hd">
-      <div class="node-hd-left">
-        <span class="sys-badge">HUBSPOT</span>
-        <span class="node-title">Discover Engagement Properties — synced in real-time</span>
-      </div>
-      <span class="status-tag ok">✓ Defined</span>
-    </div>
-    <div class="node-body">
-      <div class="two-col">
-        <div class="fg">
-          <div class="fg-lbl">⏱ Recency signals</div>
-          <div class="chips">
-            <span class="chip"><span class="chip-dot"></span>Created At <span class="chip-type">datetime</span></span>
-            <span class="chip"><span class="chip-dot"></span>Last Login At <span class="chip-type">datetime</span></span>
-          </div>
-          <div style="font-size:10px;color:var(--t3);margin-top:5px">Used to weight recency in intent score</div>
-        </div>
-        <div class="fg">
-          <div class="fg-lbl">📊 Activity signals (intent score inputs)</div>
-          <div class="chips">
-            <span class="chip"><span class="chip-dot"></span>Total Solic. Likes <span class="chip-type">number</span></span>
-            <span class="chip"><span class="chip-dot"></span>Total Solic. Dislikes <span class="chip-type">number</span></span>
-            <span class="chip"><span class="chip-dot"></span>Total Solic. Clicks <span class="chip-type">number</span></span>
-            <span class="chip"><span class="chip-dot"></span>Total Solic. Add to Pipeline <span class="chip-type">number</span></span>
+          <div class="dedup-badge">
+            <span>🔀</span>
+            <span><strong>Deduplication</strong> — match on email (exact) + company domain (fuzzy). Merge before write. Link contact → company.</span>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- CONNECTOR -->
-  <div class="conn">
-    <div class="conn-line"></div>
-    <div class="conn-arrow"></div>
-  </div>
-
-
-  <!-- ══ STEP 6 ══ -->
-  <div class="step-lbl">Step 6 — Lead Scoring Engine</div>
-
-  <div class="node scoring">
-    <div class="node-stripe"></div>
-    <div class="node-hd">
-      <div class="node-hd-left">
-        <span class="sys-badge">SCORING</span>
-        <span class="node-title">Lead Score = Fit Score + Intent Score</span>
+      <!-- Long connector down to Step 7 -->
+      <div class="conn">
+        <div class="conn-line" style="min-height:72px"></div>
+        <div class="conn-arrow"></div>
       </div>
-      <span class="status-tag warn">⚠ Thresholds TBD</span>
-    </div>
-    <div class="node-body">
-      <div class="score-pair">
 
-        <div class="score-card">
-          <div class="sc-title">Fit Score</div>
-          <div class="sc-signal">
-            <span>TTM Federal Revenue</span>
-            <span class="sc-weight hi">Primary gate</span>
+    </div><!-- /main-flow-col -->
+
+
+    <!-- Scoring sidebar (steps 5+6 as reference) -->
+    <div class="scoring-sidebar">
+
+      <div class="sidebar-header">
+        📚 Context — Lead Scoring
+        <span style="font-weight:400;color:#8B5CF6;margin-left:auto;font-size:8px;letter-spacing:0">runs in background · not a sequential step</span>
+      </div>
+
+      <!-- Step 5: Engagement Properties -->
+      <div class="sidebar-panel">
+        <div class="node-hd" style="border-bottom:1px solid #E9D5FF">
+          <div class="node-hd-left">
+            <span class="sys-badge" style="background:var(--scoring-muted);color:var(--scoring);border-color:#C4B5FD">HUBSPOT</span>
+            <span class="node-title">Engagement Tracking</span>
           </div>
-          <div class="sc-signal">
-            <span>Employee Count Range</span>
-            <span class="sc-weight mid">Supporting</span>
+          <span class="status-tag ok">✓</span>
+        </div>
+        <div class="node-body">
+          <div class="fg">
+            <div class="fg-lbl">⏱ Recency signals</div>
+            <div class="chips" style="--accent:var(--scoring);--muted:var(--scoring-muted)">
+              <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Created At <span class="chip-type">datetime</span></span>
+              <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Last Login At <span class="chip-type">datetime</span></span>
+            </div>
           </div>
-          <div class="sc-signal">
-            <span>Commercial Revenue Range</span>
-            <span class="sc-weight mid">Supporting</span>
-          </div>
-          <div class="open-q">
-            <div class="oq-hd">❓ Open — Define ICP thresholds</div>
-            <div class="oq-body">
-              <div class="editable" contenteditable="true" data-key="fit-thresholds"
-                data-ph="E.g., TTM Federal Revenue ≥ $X, headcount 50–5,000… Click to define."></div>
+          <div class="fg">
+            <div class="fg-lbl">📊 Activity signals</div>
+            <div class="chips" style="--accent:var(--scoring);--muted:var(--scoring-muted)">
+              <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Likes <span class="chip-type">num</span></span>
+              <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Dislikes <span class="chip-type">num</span></span>
+              <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Clicks <span class="chip-type">num</span></span>
+              <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Add to Pipeline <span class="chip-type">num</span></span>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="score-card">
-          <div class="sc-title">Intent Score</div>
-          <div class="sc-signal">
-            <span>Add to Pipeline count</span>
-            <span class="sc-weight hi">High weight</span>
+      <div class="sidebar-divider"></div>
+
+      <!-- Step 6: Lead Scoring Engine -->
+      <div class="sidebar-panel">
+        <div class="node-hd" style="border-bottom:1px solid #E9D5FF">
+          <div class="node-hd-left">
+            <span class="sys-badge" style="background:var(--scoring-muted);color:var(--scoring);border-color:#C4B5FD">SCORING</span>
+            <span class="node-title">Fit Score + Intent Score</span>
           </div>
-          <div class="sc-signal">
-            <span>Click count</span>
-            <span class="sc-weight mid">Med-high</span>
-          </div>
-          <div class="sc-signal">
-            <span>Like count</span>
-            <span class="sc-weight mid">Medium</span>
-          </div>
-          <div class="sc-signal">
-            <span>Last Login recency</span>
-            <span class="sc-weight hi">Recency boost</span>
-          </div>
-          <div class="sc-signal">
-            <span>Dislike count</span>
-            <span class="sc-weight neg">Negative</span>
-          </div>
-          <div class="open-q">
-            <div class="oq-hd">❓ Open — Define weights + threshold</div>
-            <div class="oq-body">
-              <div class="editable" contenteditable="true" data-key="intent-weights"
-                data-ph="E.g., Add to Pipeline = 5 pts, Click = 2, Like = 1, Dislike = −1. Route threshold = 15 pts."></div>
+          <span class="status-tag warn">⚠ TBD</span>
+        </div>
+        <div class="node-body">
+          <div class="score-pair" style="grid-template-columns:1fr;gap:8px">
+
+            <div class="score-card">
+              <div class="sc-title" style="color:var(--scoring)">Fit Score</div>
+              <div class="sc-signal"><span>TTM Federal Revenue</span><span class="sc-weight hi">Primary gate</span></div>
+              <div class="sc-signal"><span>Employee Count Range</span><span class="sc-weight mid">Supporting</span></div>
+              <div class="sc-signal"><span>Commercial Revenue Range</span><span class="sc-weight mid">Supporting</span></div>
+              <div class="open-q">
+                <div class="oq-hd">❓ Define ICP thresholds</div>
+                <div class="oq-body">
+                  <div class="editable" contenteditable="true" data-key="fit-thresholds"
+                    data-ph="E.g., TTM Federal Revenue ≥ $X, headcount 50–5,000…"></div>
+                </div>
+              </div>
             </div>
+
+            <div class="score-card">
+              <div class="sc-title" style="color:var(--scoring)">Intent Score</div>
+              <div class="sc-signal"><span>Add to Pipeline count</span><span class="sc-weight hi">High weight</span></div>
+              <div class="sc-signal"><span>Click count</span><span class="sc-weight mid">Med-high</span></div>
+              <div class="sc-signal"><span>Like count</span><span class="sc-weight mid">Medium</span></div>
+              <div class="sc-signal"><span>Last Login recency</span><span class="sc-weight hi">Recency boost</span></div>
+              <div class="sc-signal"><span>Dislike count</span><span class="sc-weight neg">Negative</span></div>
+              <div class="open-q">
+                <div class="oq-hd">❓ Define weights + threshold</div>
+                <div class="oq-body">
+                  <div class="editable" contenteditable="true" data-key="intent-weights"
+                    data-ph="E.g., Add to Pipeline = 5 pts, Click = 2… Route threshold = 15 pts."></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="output-note" style="font-size:10px;padding:7px 10px">
+            <strong>Output:</strong> Fit → ICP or Non-ICP · Intent → 0–100 · Combined tier drives Step 7 routing
           </div>
         </div>
-
       </div>
-      <div class="output-note">
-        <strong>Output:</strong> Fit Score → ICP or Non-ICP &nbsp;·&nbsp; Intent Score → 0–100 &nbsp;·&nbsp; Combined tier determines routing below
-      </div>
-    </div>
-  </div>
 
+    </div><!-- /scoring-sidebar -->
 
-  <!-- CONNECTOR -->
-  <div class="conn">
-    <div class="conn-line"></div>
-    <div class="conn-arrow"></div>
-  </div>
+  </div><!-- /main-with-sidebar -->
 
 
   <!-- ══ STEP 7 ══ -->
@@ -1066,20 +1171,19 @@
     </svg>
   </div>
 
-  <!-- Quad fork: diamond → 4 routing cards -->
-  <div class="qf-stem"><div class="qf-stem-line"></div></div>
-  <div class="qf-bar"></div>
-  <div class="qf-legs">
-    <div><div class="qf-leg"></div></div>
-    <div><div class="qf-leg"></div></div>
-    <div><div class="qf-leg"></div></div>
-    <div><div class="qf-leg"></div></div>
+  <!-- Triple fork: diamond → 3 routing cards -->
+  <div class="tf-stem"><div class="tf-stem-line"></div></div>
+  <div class="tf-bar"></div>
+  <div class="tf-legs">
+    <div><div class="tf-leg"></div></div>
+    <div><div class="tf-leg"></div></div>
+    <div><div class="tf-leg"></div></div>
   </div>
 
-  <!-- 4 routing outcome cards -->
-  <div class="routing-grid">
+  <!-- 3-col routing grid: A · B (with B1/B2) · C -->
+  <div class="routing-grid-3">
 
-    <!-- A: Talk to Sales CTA -->
+    <!-- ── A: Talk to Sales CTA ── -->
     <div class="rb-card hot">
       <div class="rb-stripe"></div>
       <div class="rb-trigger-bar">
@@ -1089,42 +1193,59 @@
       <div class="rb-body">
         <div class="rb-outcome">Immediate Outreach</div>
         <div class="rb-detail">Auto-email from CRM or RevenueHero booking link. No score check needed.</div>
-      </div>
-    </div>
-
-    <!-- B1: ICP + High Intent -->
-    <div class="rb-card warm">
-      <div class="rb-stripe"></div>
-      <div class="rb-trigger-bar">
-        <div class="rb-letter">B1 · SCORE</div>
-        <div class="rb-condition">ICP + Intent ≥ threshold</div>
-      </div>
-      <div class="rb-body">
-        <div class="rb-outcome">Route to Sales</div>
-        <div class="rb-detail">Passes to SDR/AE Assignment (Step 8 ↓)</div>
-      </div>
-    </div>
-
-    <!-- B2: ICP + Low Intent — PLACEHOLDER -->
-    <div class="rb-card nurture">
-      <div class="rb-stripe"></div>
-      <div class="rb-trigger-bar">
-        <div class="rb-letter">B2 · SCORE</div>
-        <div class="rb-condition">ICP + Intent &lt; threshold</div>
-      </div>
-      <div class="rb-body">
-        <div class="rb-outcome">Nurture</div>
-        <div class="ph-box">
-          <div class="ph-hd">📝 Marketing to define</div>
-          <div class="ph-body">
-            <div class="ph-editable editable" contenteditable="true" data-key="nurture-strategy"
-              data-ph="E.g., drip email, retargeting audience, monthly digest… Click to fill in."></div>
-          </div>
+        <div style="margin-top:10px;padding:6px 8px;border-radius:5px;background:#FEE2E2;border:1px solid #FECACA;font-family:'JetBrains Mono',monospace;font-size:9px;color:#991B1B;letter-spacing:0.04em">
+          → Goes to Step 8 ↓
         </div>
       </div>
     </div>
 
-    <!-- C: Non-ICP — PLACEHOLDER -->
+    <!-- ── B: ICP — Nurture (contains B1 + B2) ── -->
+    <div class="rb-card warm">
+      <div class="rb-stripe"></div>
+      <div class="rb-trigger-bar">
+        <div class="rb-letter">B · SCORE</div>
+        <div class="rb-condition">ICP match</div>
+      </div>
+      <div class="rb-body">
+        <div class="rb-outcome">Nurture through marketing emails</div>
+        <div class="rb-detail">Cadence and targeting determined by intent tier below.</div>
+
+        <!-- B sub-fork connector -->
+        <div class="b-sub-fork">
+          <div class="b-sub-fork-stem"><div class="b-sub-fork-stem-line"></div></div>
+          <div class="b-sub-fork-bar"></div>
+          <div class="b-sub-fork-legs"><div class="b-sub-fork-leg"></div><div class="b-sub-fork-leg"></div></div>
+        </div>
+
+        <!-- B1 + B2 sub-cards -->
+        <div class="b-sub-grid">
+
+          <div class="b-sub-card b1">
+            <div class="b-sub-letter">B1 · HIGH INTENT</div>
+            <div class="b-sub-condition">Intent ≥ threshold</div>
+            <div class="b-sub-note">Route directly to Sales rep.</div>
+            <div style="margin-top:7px;padding:5px 7px;border-radius:4px;background:rgba(4,120,87,0.12);border:1px solid #6EE7B7;font-family:'JetBrains Mono',monospace;font-size:8px;color:#065F46;letter-spacing:0.04em">
+              → Goes to Step 8 ↓
+            </div>
+          </div>
+
+          <div class="b-sub-card b2">
+            <div class="b-sub-letter">B2 · LOW INTENT</div>
+            <div class="b-sub-condition">Intent &lt; threshold</div>
+            <div class="ph-box" style="margin-top:5px">
+              <div class="ph-hd">📝 Define cadence</div>
+              <div class="ph-body">
+                <div class="ph-editable editable" contenteditable="true" data-key="nurture-strategy"
+                  data-ph="E.g., frequency, email topics, re-score trigger… Click to fill in."></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /b-sub-grid -->
+      </div>
+    </div>
+
+    <!-- ── C: Non-ICP — Educate ── -->
     <div class="rb-card cold">
       <div class="rb-stripe"></div>
       <div class="rb-trigger-bar">
@@ -1132,51 +1253,57 @@
         <div class="rb-condition">Non-ICP</div>
       </div>
       <div class="rb-body">
-        <div class="rb-outcome">Park / Educate</div>
-        <div class="ph-box">
-          <div class="ph-hd">📝 Marketing to define</div>
-          <div class="ph-body">
-            <div class="ph-editable editable" contenteditable="true" data-key="park-strategy"
-              data-ph="E.g., product newsletter, community access, no outreach… Click to fill in."></div>
+        <div class="rb-outcome">Educate</div>
+        <div class="rb-detail">3-email educational sequence. No sales outreach.</div>
+
+        <div class="email-cadence">
+          <div class="email-step"><span class="email-num">01</span> Introductory education email</div>
+          <div class="email-sep">↓ +7 days (no weekends)</div>
+          <div class="email-step"><span class="email-num">02</span> Value / use-case email</div>
+          <div class="email-sep">↓ +7 days (no weekends)</div>
+          <div class="email-step"><span class="email-num">03</span> Product spotlight email</div>
+        </div>
+
+        <div class="loop-back">
+          <span class="loop-icon">↩</span>
+          <div>
+            <strong>Quarterly cadence:</strong> Update TTM Federal Revenue → recheck Fit Score → loop back to Step 7.
+            When Fit Score reaches ICP threshold → exit C and re-enter A / B1 / B2.
           </div>
         </div>
       </div>
     </div>
 
-  </div><!-- /routing-grid -->
+  </div><!-- /routing-grid-3 -->
 
 
-  <!-- Partial merge: only A + B1 (first 2 columns) lead to SDR -->
-  <div style="display:flex;align-items:flex-end;height:32px;gap:8px;padding:0">
-    <!-- legs under A and B1 only (left 50% of the 4-col grid) -->
-    <div style="width:50%;display:flex;justify-content:space-between;padding:0 12.5%">
-      <div style="width:2px;height:32px;background:var(--wire-light)"></div>
-      <div style="width:2px;height:32px;background:var(--wire-light)"></div>
+  <!-- Partial merge: only A (col 1) + B (col 2, representing B1) → Step 8 -->
+  <!-- Col 3 (C) terminates — no leg -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div style="display:flex;justify-content:center">
+      <div style="width:2px;height:28px;background:var(--wire-light)"></div>
     </div>
-    <!-- right 50% has no legs (B2 and C terminate above) -->
-    <div style="width:50%"></div>
+    <div style="display:flex;justify-content:center">
+      <div style="width:2px;height:28px;background:var(--wire-light)"></div>
+    </div>
+    <div></div>
   </div>
-  <div style="display:flex;gap:8px">
-    <div style="width:50%;position:relative">
-      <div style="position:absolute;top:0;left:12.5%;right:12.5%;height:2px;background:var(--wire-light)"></div>
-      <div style="display:flex;justify-content:center;padding-top:2px">
-        <div style="width:2px;height:18px;background:var(--wire-light)"></div>
-      </div>
-    </div>
-    <div style="width:50%"></div>
+  <!-- Horizontal bar spanning A center → B center (left 67%) -->
+  <div style="width:66.67%;position:relative;height:2px">
+    <div style="position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--wire-light)"></div>
   </div>
-  <div style="display:flex;gap:8px">
-    <div style="width:50%;display:flex;justify-content:center">
-      <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--wire)"></div>
-    </div>
-    <div style="width:50%"></div>
+  <div style="width:66.67%;display:flex;justify-content:center">
+    <div style="width:2px;height:18px;background:var(--wire-light)"></div>
+  </div>
+  <div style="width:66.67%;display:flex;justify-content:center">
+    <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--wire)"></div>
   </div>
 
 
-  <!-- ══ STEP 8 ══ -->
-  <div class="step-lbl" style="width:50%">Step 8 — SDR / AE Assignment</div>
+  <!-- ══ STEP 8 ══ (A + B1 only) -->
+  <div class="step-lbl" style="width:66.67%">Step 8 — SDR / AE Assignment</div>
 
-  <div style="width:50%">
+  <div style="width:66.67%">
     <div class="node routing">
       <div class="node-stripe"></div>
       <div class="node-hd">
