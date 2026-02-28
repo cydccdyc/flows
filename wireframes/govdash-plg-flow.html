@@ -50,130 +50,48 @@
       --t3: #94A3B8;
     }
 
-    html {
-      background: var(--bg);
-      color: var(--t1);
-      font-family: 'Lexend Deca', sans-serif;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    body {
-      min-height: 100vh;
-      background-color: var(--bg);
-      background-image: radial-gradient(circle, #B0BED6 1px, transparent 1px);
-      background-size: 22px 22px;
-    }
+    html { background: var(--bg); color: var(--t1); font-family: 'Lexend Deca', sans-serif; font-size: 13px; line-height: 1.5; }
+    body { min-height: 100vh; background-color: var(--bg); background-image: radial-gradient(circle, #B0BED6 1px, transparent 1px); background-size: 22px 22px; }
 
     /* ─── HEADER ─── */
-    .hdr {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 36px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
+    .hdr { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 36px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .hdr-left { display: flex; align-items: center; gap: 10px; }
     .hdr-logo { font-weight: 700; font-size: 14px; color: var(--t1); letter-spacing: -0.02em; }
-    .hdr-sep  { color: var(--t3); }
+    .hdr-sep { color: var(--t3); }
     .hdr-title { font-size: 13px; color: var(--t2); font-weight: 400; }
-    .hdr-tag {
-      font-family: 'JetBrains Mono', monospace; font-size: 9px;
-      padding: 2px 7px; border-radius: 3px;
-      background: var(--discover-muted); color: var(--discover);
-      border: 1px solid #BFDBFE; letter-spacing: 0.08em;
-    }
+    .hdr-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 7px; border-radius: 3px; background: var(--discover-muted); color: var(--discover); border: 1px solid #BFDBFE; letter-spacing: 0.08em; }
     .legend { display: flex; align-items: center; gap: 14px; }
     .leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--t3); font-family: 'JetBrains Mono', monospace; }
     .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
     .hdr-right { display: flex; align-items: center; gap: 8px; }
-    .live-pill {
-      display: flex; align-items: center; gap: 5px;
-      font-family: 'JetBrains Mono', monospace; font-size: 9px;
-      padding: 4px 9px; border-radius: 20px;
-      background: #F8FAFC; border: 1px solid var(--border); color: var(--t3);
-    }
+    .live-pill { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 9px; border-radius: 20px; background: #F8FAFC; border: 1px solid var(--border); color: var(--t3); }
     .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--t3); transition: background 0.3s; }
     .live-dot.online  { background: #10B981; box-shadow: 0 0 5px rgba(16,185,129,0.4); }
     .live-dot.demo    { background: #F59E0B; }
     .live-dot.offline { background: #EF4444; }
-    .save-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 10px;
-      padding: 5px 12px; border-radius: 5px;
-      background: var(--t1); color: #fff; border: none; cursor: pointer;
-      letter-spacing: 0.04em; transition: background 0.15s;
-    }
+    .save-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 5px 12px; border-radius: 5px; background: var(--t1); color: #fff; border: none; cursor: pointer; letter-spacing: 0.04em; transition: background 0.15s; }
     .save-btn:hover { background: #1e293b; }
 
     /* ─── CANVAS ─── */
-    .canvas {
-      max-width: 1060px;
-      margin: 0 auto;
-      padding: 48px 36px 120px;
-    }
+    .canvas { max-width: 1060px; margin: 0 auto; padding: 48px 36px 120px; }
 
-    /* ─── STEP LABEL — prominent ─── */
-    .step-lbl {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 40px 0 16px;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--t1);
-      letter-spacing: -0.01em;
-    }
+    /* ─── STEP LABEL ─── */
+    .step-lbl { display: flex; align-items: center; gap: 12px; margin: 44px 0 18px; font-size: 15px; font-weight: 600; color: var(--t1); letter-spacing: -0.01em; }
     .step-lbl:first-child { margin-top: 0; }
-    .step-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      padding: 3px 9px;
-      border-radius: 4px;
-      background: var(--t1);
-      color: white;
-      flex-shrink: 0;
-    }
-    .step-lbl::after {
-      content: '';
-      flex: 1;
-      height: 1.5px;
-      background: linear-gradient(to right, rgba(15,23,42,0.15), transparent);
-      border-radius: 2px;
-    }
+    .step-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 4px; background: var(--t1); color: white; flex-shrink: 0; }
+    .step-lbl::after { content: ''; flex: 1; height: 1.5px; background: linear-gradient(to right, rgba(15,23,42,0.15), transparent); border-radius: 2px; }
 
     /* ─── NODE CARD ─── */
-    .node {
-      background: var(--card);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      --accent: var(--t3);
-      --muted: #F8FAFC;
-    }
+    .node { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; --accent: var(--t3); --muted: #F8FAFC; }
     .node.discover { --accent: var(--discover); --muted: var(--discover-muted); }
     .node.clay     { --accent: var(--clay);     --muted: var(--clay-muted); }
     .node.hubspot  { --accent: var(--hubspot);  --muted: var(--hubspot-muted); }
     .node.scoring  { --accent: var(--scoring);  --muted: var(--scoring-muted); }
     .node.routing  { --accent: var(--routing);  --muted: var(--routing-muted); }
-
     .node-stripe { height: 3px; background: var(--accent); }
-    .node-hd {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 18px 11px;
-      border-bottom: 1px solid var(--border);
-    }
+    .node-hd { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 11px; border-bottom: 1px solid var(--border); }
     .node-hd-left { display: flex; align-items: center; gap: 9px; }
-    .sys-badge {
-      font-family: 'JetBrains Mono', monospace; font-size: 8px;
-      letter-spacing: 0.1em; padding: 2px 7px; border-radius: 3px;
-      background: var(--muted); color: var(--accent);
-      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-      white-space: nowrap;
-    }
+    .sys-badge { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; padding: 2px 7px; border-radius: 3px; background: var(--muted); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); white-space: nowrap; }
     .node-title { font-weight: 600; font-size: 13px; color: var(--t1); letter-spacing: -0.01em; }
     .status-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
     .status-tag.ok   { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
@@ -182,332 +100,206 @@
 
     /* ─── CHIPS ─── */
     .chips { display: flex; flex-wrap: wrap; gap: 5px; }
-    .chip {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 8px; border-radius: 5px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10px;
-      color: var(--t2); background: var(--muted);
-      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-    }
+    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--t2); background: var(--muted); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
     .chip-type { font-size: 8px; color: var(--t3); margin-left: 1px; }
     .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
-    /* ─── FIELD GROUP ─── */
+    /* ─── MISC ─── */
     .fg { margin-bottom: 14px; }
     .fg:last-child { margin-bottom: 0; }
-    .fg-lbl {
-      font-family: 'JetBrains Mono', monospace; font-size: 8px;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--t3); margin-bottom: 7px;
-    }
-
-    /* ─── NOTE BAR ─── */
-    .note-bar {
-      display: flex; align-items: flex-start; gap: 7px;
-      margin-top: 12px; padding: 8px 10px; border-radius: 6px;
-      background: color-mix(in srgb, var(--accent) 8%, white);
-      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-      font-size: 11px; color: var(--t2);
-    }
-    .note-icon { font-size: 12px; flex-shrink: 0; }
-
-    /* ─── TWO-COL ─── */
+    .fg-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t3); margin-bottom: 7px; }
+    .note-bar { display: flex; align-items: flex-start; gap: 7px; margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 8%, white); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); font-size: 11px; color: var(--t2); }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-    /* ─── CONNECTORS ─── */
-    .conn { display: flex; flex-direction: column; align-items: center; padding: 4px 0; }
-    .conn-line {
-      width: 2px; min-height: 36px; background: var(--wire-light);
-      position: relative; overflow: hidden;
-    }
-    .conn-line::after {
-      content: '';
-      position: absolute; top: -60%; left: 0; right: 0; height: 50%;
-      background: linear-gradient(to bottom, transparent, rgba(122,143,173,0.5), transparent);
-      animation: pulse 2.2s ease-in-out infinite;
-    }
-    @keyframes pulse { 0% { top: -60%; } 100% { top: 160%; } }
-    .conn-arrow { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--wire); }
-
-    /* fork connectors */
-    .fork-stem  { display: flex; justify-content: center; }
-    .fork-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
-    .fork-bar   { height: 2px; background: var(--wire-light); margin: 0 25%; }
-    .fork-legs  { display: flex; justify-content: space-between; padding: 0 25%; }
-    .fork-leg   { width: 2px; height: 24px; background: var(--wire-light); }
-
-    /* merge connectors */
-    .merge-legs { display: flex; justify-content: space-between; padding: 0 25%; }
-    .merge-leg  { width: 2px; height: 24px; background: var(--wire-light); }
-    .merge-bar  { height: 2px; background: var(--wire-light); margin: 0 25%; }
-    .merge-stem { display: flex; justify-content: center; }
-    .merge-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
-
-    /* triple fork */
-    .tf-stem { display: flex; justify-content: center; }
-    .tf-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
-    .tf-bar { height: 2px; background: var(--wire-light); margin: 0 16.67%; }
-    .tf-legs { display: grid; grid-template-columns: repeat(3, 1fr); }
-    .tf-legs > div { display: flex; justify-content: center; }
-    .tf-leg { width: 2px; height: 24px; background: var(--wire-light); }
-
-    /* ─── HubSpot dedup styles ─── */
     .decision-split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .ds-branch { padding: 10px 12px; border-radius: 7px; background: #F8FAFC; border: 1px solid var(--border); }
     .ds-branch-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; margin-bottom: 5px; }
     .ds-branch-lbl.found  { color: #065F46; }
     .ds-branch-lbl.create { color: var(--t3); }
     .ds-branch-txt { font-size: 11px; color: var(--t2); }
-    .dedup-badge {
-      display: flex; align-items: center; gap: 8px;
-      margin-top: 12px; padding: 8px 12px; border-radius: 6px;
-      background: var(--scoring-muted); border: 1px solid #C4B5FD;
-      font-size: 11px; color: #4C1D95;
-    }
+    .dedup-badge { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 8px 12px; border-radius: 6px; background: var(--scoring-muted); border: 1px solid #C4B5FD; font-size: 11px; color: #4C1D95; }
 
-    /* ─── STEP 5: CHECK LEAD SCORE — 3-column internal layout ─── */
-    .score-check-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.1fr;
-      gap: 0;
-    }
-    .score-check-section {
-      padding: 16px 18px 18px;
-    }
-    .score-check-section + .score-check-section {
-      border-left: 1px solid var(--border);
-    }
-    .section-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--t2);
-      letter-spacing: 0.01em;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .section-title-icon { font-size: 13px; }
-
-    /* Engagement editable add-block */
-    .eng-add-block {
-      margin-top: 8px;
-      border: 1.5px dashed #FCD34D;
-      border-radius: 5px;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    .eng-add-block:focus-within { border-color: #F59E0B; }
-    .eng-add-hd {
-      display: flex; align-items: center; gap: 5px;
-      padding: 4px 8px; background: #FFFBEB;
-      border-bottom: 1px solid #FEF3C7;
-      font-family: 'JetBrains Mono', monospace; font-size: 7.5px;
-      letter-spacing: 0.06em; color: #92400E;
-    }
-    .eng-editable {
-      min-height: 28px; padding: 6px 8px; background: #FFFDE7;
-      font-size: 10px; color: var(--t2); line-height: 1.5;
-    }
-
-    /* ICP criteria */
-    .icp-wrap { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
-    .icp-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 7px 10px; border-radius: 6px;
-      background: var(--routing-muted); border: 1px solid #6EE7B7;
-    }
-    .icp-connector {
-      font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 700;
-      color: var(--routing); background: white; border: 1px solid #6EE7B7;
-      padding: 1px 6px; border-radius: 3px; min-width: 28px; text-align: center;
-    }
-    .icp-prop { font-size: 11px; color: var(--t1); font-weight: 500; flex: 1; }
-    .icp-op { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--routing); font-weight: 700; }
-    .icp-val {
-      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
-      color: var(--routing); background: white; padding: 2px 8px;
-      border-radius: 3px; border: 1px solid #6EE7B7; white-space: nowrap;
-    }
-    .icp-result {
-      margin-top: 8px; padding: 7px 12px; border-radius: 6px;
-      background: #065F46; color: white; font-size: 11px; font-weight: 600;
-      text-align: center; letter-spacing: 0.01em;
-    }
-
-    /* Intent weights */
-    .weight-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 6px 0; border-bottom: 1px solid var(--border);
-      font-size: 11px; color: var(--t2);
-    }
-    .weight-row:last-of-type { border-bottom: none; }
-    .weight-input-wrap {
-      display: flex; align-items: center; gap: 4px;
-      background: #FFFDE7; border: 1.5px solid #FCD34D;
-      border-radius: 4px; padding: 2px 6px; min-width: 64px;
-    }
-    .weight-input-wrap:focus-within { border-color: #F59E0B; }
-    .weight-unit { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #D97706; }
-    .weight-field {
-      min-width: 28px; font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; font-weight: 600; color: var(--t1);
-    }
-    .weight-field:empty::before { content: attr(data-ph); color: #D97706; font-style: italic; }
-
-    /* intent extra block */
-    .intent-extra {
-      margin-top: 10px; border: 1.5px dashed #FCD34D; border-radius: 5px; overflow: hidden;
-    }
-    .intent-extra:focus-within { border-color: #F59E0B; }
-    .intent-extra-hd {
-      padding: 4px 8px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7;
-      font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #92400E;
-    }
-    .intent-extra-body { padding: 6px 8px; background: #FFFDE7; }
-
-    /* output note */
-    .output-note {
-      margin-top: 0; padding: 10px 14px;
-      background: var(--scoring-muted); border-top: 1px solid #C4B5FD;
-      font-size: 11px; color: #4C1D95;
-    }
-    .output-note strong { color: #5B21B6; }
+    /* ─── CONNECTORS ─── */
+    .conn { display: flex; flex-direction: column; align-items: center; padding: 4px 0; }
+    .conn-line { width: 2px; min-height: 36px; background: var(--wire-light); position: relative; overflow: hidden; }
+    .conn-line::after { content: ''; position: absolute; top: -60%; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, transparent, rgba(122,143,173,0.5), transparent); animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse { 0% { top: -60%; } 100% { top: 160%; } }
+    .conn-arrow { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--wire); }
+    .fork-stem  { display: flex; justify-content: center; }
+    .fork-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
+    .fork-bar   { height: 2px; background: var(--wire-light); margin: 0 25%; }
+    .fork-legs  { display: flex; justify-content: space-between; padding: 0 25%; }
+    .fork-leg   { width: 2px; height: 24px; background: var(--wire-light); }
+    .merge-legs { display: flex; justify-content: space-between; padding: 0 25%; }
+    .merge-leg  { width: 2px; height: 24px; background: var(--wire-light); }
+    .merge-bar  { height: 2px; background: var(--wire-light); margin: 0 25%; }
+    .merge-stem { display: flex; justify-content: center; }
+    .merge-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
 
     [contenteditable] { outline: none; }
-    .editable {
-      min-height: 36px; font-size: 11px; color: var(--t2);
-      font-family: 'Lexend Deca', sans-serif; line-height: 1.6;
-      padding: 2px; border-radius: 3px; transition: background 0.15s;
-    }
+    .editable { font-size: 11px; color: var(--t2); font-family: 'Lexend Deca', sans-serif; line-height: 1.6; padding: 2px; border-radius: 3px; transition: background 0.15s; min-height: 32px; }
     .editable:focus { background: rgba(251,191,36,0.08); }
     .editable:empty::before { content: attr(data-ph); color: var(--t3); font-style: italic; pointer-events: none; }
 
-    /* ─── STEP 6: ROUTING — Flex layout ─── */
+    /* ─── STEP 5: CHECK LEAD SCORE ─── */
+
+    /* Engagement tracking — top section, 2-col chips layout */
+    .eng-section { padding: 16px 18px 18px; border-bottom: 1px solid var(--border); }
+    .eng-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .eng-add-block { margin-top: 8px; border: 1.5px dashed #FCD34D; border-radius: 5px; overflow: hidden; }
+    .eng-add-block:focus-within { border-color: #F59E0B; }
+    .eng-add-hd { padding: 4px 8px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.06em; color: #92400E; }
+    .eng-editable { min-height: 26px; padding: 5px 8px; background: #FFFDE7; font-size: 11px; color: var(--t2); line-height: 1.5; }
+
+    /* Fit + Intent — bottom 2-col */
+    .scoring-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .score-panel { padding: 16px 18px 18px; }
+    .score-panel + .score-panel { border-left: 1px solid var(--border); }
+    .score-panel-title { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+    .score-panel-title-icon { font-size: 15px; }
+
+    /* ICP criteria */
+    .icp-wrap { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+    .icp-row { display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-radius: 6px; background: var(--routing-muted); border: 1px solid #6EE7B7; flex-wrap: wrap; }
+    .icp-conn { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--routing); background: white; border: 1px solid #6EE7B7; padding: 2px 7px; border-radius: 3px; min-width: 32px; text-align: center; flex-shrink: 0; }
+    .icp-prop { font-size: 12px; color: var(--t1); font-weight: 500; flex: 1; }
+    .icp-op { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--routing); font-weight: 700; }
+    .icp-val { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--routing); background: white; padding: 2px 9px; border-radius: 3px; border: 1px solid #6EE7B7; white-space: nowrap; }
+
+    /* Fit outputs */
+    .fit-outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .fit-out { padding: 10px 12px; border-radius: 7px; text-align: center; }
+    .fit-out.icp { background: var(--routing-muted); border: 1.5px solid #6EE7B7; }
+    .fit-out.non-icp { background: #FEF2F2; border: 1.5px solid #FECACA; }
+    .fit-out-label { font-weight: 700; font-size: 12px; margin-bottom: 3px; }
+    .fit-out.icp .fit-out-label { color: #065F46; }
+    .fit-out.non-icp .fit-out-label { color: #991B1B; }
+    .fit-out-dest { font-size: 11px; }
+    .fit-out.icp .fit-out-dest { color: var(--routing); }
+    .fit-out.non-icp .fit-out-dest { color: #DC2626; }
+
+    /* Intent weights */
+    .weight-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--t2); }
+    .weight-row:last-of-type { border-bottom: none; }
+    .weight-input-wrap { display: flex; align-items: center; gap: 4px; background: #FFFDE7; border: 1.5px solid #FCD34D; border-radius: 4px; padding: 2px 7px; min-width: 70px; }
+    .weight-input-wrap:focus-within { border-color: #F59E0B; }
+    .weight-unit { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #D97706; }
+    .weight-field { min-width: 28px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--t1); min-height: 18px; }
+    .weight-field:empty::before { content: attr(data-ph); color: #D97706; font-style: italic; }
+    .intent-extra { margin-top: 10px; border: 1.5px dashed #FCD34D; border-radius: 5px; overflow: hidden; }
+    .intent-extra:focus-within { border-color: #F59E0B; }
+    .intent-extra-hd { padding: 4px 8px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #92400E; }
+    .intent-extra-body { padding: 6px 8px; background: #FFFDE7; }
+
+    /* Fit → Routing output note */
+    .score-output { padding: 11px 18px; background: var(--scoring-muted); border-top: 1px solid #C4B5FD; font-size: 12px; color: #4C1D95; }
+    .score-output strong { color: #5B21B6; }
+
+    /* ─── FIT SCORE → ROUTING BRIDGE ─── */
+    /* Visual split showing ICP → A/B and Non-ICP → C, aligned with routing columns below */
+    .fit-routing-bridge { display: flex; gap: 10px; margin: 0; }
+    .frb-col { display: flex; flex-direction: column; align-items: center; }
+    .frb-col.icp-col { flex: 3; } /* A+B = 3 of 4 units */
+    .frb-col.non-icp-col { flex: 1; } /* C = 1 of 4 units */
+    .frb-leg { width: 2px; background: var(--wire-light); }
+    .frb-leg.icp-leg { height: 20px; background: #6EE7B7; }
+    .frb-leg.non-icp-leg { height: 20px; background: #FECACA; }
+    .frb-label { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; width: 100%; }
+    .frb-label.icp-lbl { background: var(--routing-muted); border: 1.5px solid #6EE7B7; color: #065F46; }
+    .frb-label.non-icp-lbl { background: #FEF2F2; border: 1.5px solid #FECACA; color: #991B1B; }
+    .frb-leg-bottom { width: 2px; }
+    .frb-leg-bottom.icp-bottom { height: 20px; background: #6EE7B7; }
+    .frb-leg-bottom.non-icp-bottom { height: 20px; background: #FECACA; }
+
+    /* ─── STEP 6: ROUTING ─── */
     .diamond-wrap { display: flex; justify-content: center; padding: 4px 0; }
 
-    .routing-flex { display: flex; gap: 10px; align-items: flex-start; }
+    /* Routing flex — align-items:stretch so all columns equal height */
+    .routing-flex { display: flex; gap: 10px; align-items: stretch; }
     .r-col { flex: 1; display: flex; flex-direction: column; }
     .r-col.b-group { flex: 2; }
 
-    /* Routing branch cards (level 1) */
-    .rb-card {
-      border-radius: 10px; border: 1px solid var(--border);
-      overflow: hidden; background: var(--card);
-      --rb-accent: var(--t3); --rb-bg: #F8FAFC;
-    }
-    .rb-card.hot    { --rb-accent: #DC2626; --rb-bg: #FEF2F2; border-color: #FECACA; }
-    .rb-card.warm   { --rb-accent: var(--routing); --rb-bg: var(--routing-muted); border-color: #6EE7B7; }
-    .rb-card.cold   { --rb-accent: #4B5563; --rb-bg: #F3F4F6; border-color: #D1D5DB; }
+    /* Routing level-1 cards */
+    .rb-card { border-radius: 10px; border: 1px solid var(--border); overflow: hidden; background: var(--card); --rb-accent: var(--t3); --rb-bg: #F8FAFC; }
+    .rb-card.hot  { --rb-accent: #DC2626; --rb-bg: #FEF2F2; border-color: #FECACA; }
+    .rb-card.warm { --rb-accent: var(--routing); --rb-bg: var(--routing-muted); border-color: #6EE7B7; }
+    .rb-card.cold { --rb-accent: #4B5563; --rb-bg: #F3F4F6; border-color: #D1D5DB; }
     .rb-stripe { height: 3px; background: var(--rb-accent); }
     .rb-trigger-bar { padding: 10px 12px 8px; background: var(--rb-bg); border-bottom: 1px solid var(--border); }
-    .rb-letter { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; color: var(--rb-accent); margin-bottom: 3px; letter-spacing: 0.06em; }
-    .rb-condition { font-size: 11px; color: var(--t2); font-weight: 500; line-height: 1.3; }
+    .rb-letter { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--rb-accent); margin-bottom: 4px; letter-spacing: 0.06em; }
+    .rb-condition { font-size: 12px; color: var(--t2); font-weight: 500; line-height: 1.3; }
     .rb-body { padding: 12px; }
-    .rb-outcome { font-size: 12px; color: var(--t1); font-weight: 600; margin-bottom: 6px; }
-    .rb-detail { font-size: 10px; color: var(--t2); line-height: 1.4; }
+    .rb-outcome { font-size: 13px; color: var(--t1); font-weight: 600; margin-bottom: 6px; }
+    .rb-detail { font-size: 12px; color: var(--t2); line-height: 1.5; }
 
-    /* → Step N badge */
-    .goto-badge {
-      margin-top: 10px; padding: 6px 9px; border-radius: 5px;
-      font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600;
-      letter-spacing: 0.04em; display: flex; align-items: center; gap: 5px;
-    }
-    .goto-badge.to-step { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; }
-    .goto-badge.loop    { background: #FFFDE7; border: 1.5px dashed #FCD34D; color: #92400E; }
+    /* Connector leg inside a column — fills remaining flex height */
+    .col-leg { flex: 1; display: flex; justify-content: center; padding-top: 8px; min-height: 16px; }
+    .col-leg-line { width: 2px; background: var(--wire-light); }
 
-    /* B group fork inside */
-    .b-fork-stem { display: flex; justify-content: center; margin: 4px 0 0; }
-    .b-fork-stem-line { width: 2px; height: 16px; background: var(--wire-light); }
-    .b-fork-bar { height: 2px; background: var(--wire-light); margin: 0 25%; }
-    .b-fork-legs { display: flex; justify-content: space-between; padding: 0 25%; }
-    .b-fork-leg { width: 2px; height: 16px; background: var(--wire-light); }
+    /* B fork connector */
+    .b-fork-stem  { display: flex; justify-content: center; }
+    .b-fork-stem-line { width: 2px; height: 14px; background: var(--wire-light); }
+    .b-fork-bar   { height: 2px; background: var(--wire-light); margin: 0 25%; }
+    .b-fork-legs  { display: flex; justify-content: space-between; padding: 0 25%; }
+    .b-fork-leg   { width: 2px; height: 14px; background: var(--wire-light); }
 
-    /* B1 / B2 pair (level 2) */
-    .b-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    /* B1/B2 pair — flex so align-items:stretch works */
+    .b-pair { flex: 1; display: flex; gap: 8px; align-items: stretch; }
+    .b-pair-col { flex: 1; display: flex; flex-direction: column; }
 
     /* Level-2 sub-cards */
-    .sub-card {
-      border-radius: 8px; border: 1px solid var(--border);
-      overflow: hidden; background: var(--card);
-      --sub-accent: var(--t3); --sub-bg: #F8FAFC;
-    }
+    .sub-card { border-radius: 8px; border: 1px solid var(--border); overflow: hidden; background: var(--card); --sub-accent: var(--t3); --sub-bg: #F8FAFC; }
     .sub-card.b1 { --sub-accent: var(--routing); --sub-bg: var(--routing-muted); border-color: #6EE7B7; }
     .sub-card.b2 { --sub-accent: #D97706; --sub-bg: #FFFBEB; border-color: #FDE68A; }
     .sub-stripe { height: 3px; background: var(--sub-accent); }
-    .sub-hd { padding: 9px 12px 7px; background: var(--sub-bg); border-bottom: 1px solid var(--border); }
-    .sub-letter { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; color: var(--sub-accent); margin-bottom: 2px; letter-spacing: 0.06em; }
-    .sub-condition { font-size: 10px; color: var(--t2); font-weight: 500; }
-    .sub-body { padding: 10px 12px 12px; }
-    .sub-outcome { font-size: 11px; color: var(--t1); font-weight: 600; margin-bottom: 8px; }
+    .sub-hd { padding: 10px 12px 8px; background: var(--sub-bg); border-bottom: 1px solid var(--border); }
+    .sub-letter { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--sub-accent); margin-bottom: 3px; letter-spacing: 0.06em; }
+    .sub-condition { font-size: 12px; color: var(--t2); font-weight: 500; }
+    .sub-body { padding: 12px; }
+    .sub-outcome { font-size: 13px; color: var(--t1); font-weight: 600; margin-bottom: 10px; }
 
-    /* Email cadence list */
-    .email-seq { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
-    .email-item { display: flex; align-items: center; gap: 7px; font-size: 10px; color: var(--t2); }
-    .email-num {
-      font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 600;
-      color: #4B5563; background: #E5E7EB; border-radius: 3px;
-      padding: 1px 5px; flex-shrink: 0;
-    }
-    .email-gap {
-      font-size: 9px; color: var(--t3);
-      font-family: 'JetBrains Mono', monospace; padding-left: 24px;
-    }
-    .email-trigger {
-      margin: 6px 0; padding: 5px 8px; border-radius: 5px;
-      background: var(--routing-muted); border: 1px solid #6EE7B7;
-      font-size: 10px; color: #065F46; font-weight: 500;
-    }
+    /* Email sequence — LARGER for readability */
+    .email-seq { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .email-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--t2); }
+    .email-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: #374151; background: #E5E7EB; border-radius: 4px; padding: 2px 7px; flex-shrink: 0; }
+    .email-gap { font-size: 11px; color: var(--t3); font-family: 'JetBrains Mono', monospace; padding-left: 30px; }
+    .email-trigger { margin: 6px 0; padding: 7px 10px; border-radius: 6px; background: var(--routing-muted); border: 1px solid #6EE7B7; font-size: 12px; color: #065F46; font-weight: 600; }
 
-    /* Cadence editable block */
-    .cadence-block {
-      margin-top: 8px; border: 1.5px dashed #FCD34D; border-radius: 5px; overflow: hidden;
-    }
+    /* Cadence editable */
+    .cadence-block { margin-top: 8px; border: 1.5px dashed #FCD34D; border-radius: 5px; overflow: hidden; }
     .cadence-block:focus-within { border-color: #F59E0B; }
-    .cadence-hd {
-      padding: 4px 7px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7;
-      font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #92400E;
-    }
+    .cadence-hd { padding: 4px 8px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #92400E; }
     .cadence-body { padding: 6px 8px; background: #FFFDE7; }
-    .cadence-editable { min-height: 32px; font-size: 10px; color: var(--t2); line-height: 1.5; padding: 2px; }
+    .cadence-editable { min-height: 32px; font-size: 11px; color: var(--t2); line-height: 1.5; padding: 2px; }
     .cadence-editable:empty::before { content: attr(data-ph); color: var(--t3); font-style: italic; pointer-events: none; }
 
-    /* Loop back indicator */
-    .loop-back {
-      margin-top: 10px; padding: 8px 10px; border-radius: 6px;
-      background: rgba(250,245,255,0.8); border: 1.5px dashed #C4B5FD;
-      font-size: 10px; color: #5B21B6; display: flex; gap: 7px; align-items: flex-start; line-height: 1.4;
-    }
-    .loop-icon { font-size: 13px; flex-shrink: 0; margin-top: -1px; }
+    /* Loop back badge */
+    .loop-back { margin-top: 10px; padding: 8px 10px; border-radius: 6px; background: rgba(250,245,255,0.9); border: 1.5px dashed #C4B5FD; font-size: 12px; color: #5B21B6; display: flex; gap: 7px; align-items: flex-start; line-height: 1.4; }
+    .loop-icon { font-size: 14px; flex-shrink: 0; margin-top: -1px; }
+
+    /* → Step N badge inside routing cards */
+    .goto-badge { margin-top: 10px; padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .goto-badge.to-step { background: #EFF6FF; border: 1.5px solid #BFDBFE; color: #1D4ED8; }
 
     /* ─── SDR ASSIGNMENT ─── */
     .assign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .assign-card { border-radius: 8px; border: 1px solid var(--border); padding: 12px; background: #F8FAFC; }
+    .assign-card { border-radius: 8px; border: 1px solid var(--border); padding: 13px; background: #F8FAFC; }
     .assign-card.found { background: var(--routing-muted); border-color: #6EE7B7; }
-    .ac-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
+    .ac-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; margin-bottom: 7px; text-transform: uppercase; }
     .ac-lbl.found { color: #065F46; }
     .ac-lbl.none  { color: var(--t3); }
-    .ac-body { font-size: 11px; color: var(--t2); line-height: 1.5; }
+    .ac-body { font-size: 12px; color: var(--t2); line-height: 1.5; }
     .ac-body strong { color: var(--t1); font-weight: 600; }
 
-    /* ─── SAVE TOAST ─── */
-    .toast {
-      position: fixed; bottom: 22px; right: 22px;
-      padding: 8px 14px; background: var(--t1); color: #fff;
-      border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
-      opacity: 0; transform: translateY(4px);
-      transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 200;
-    }
+    /* ─── TOAST ─── */
+    .toast { position: fixed; bottom: 22px; right: 22px; padding: 8px 14px; background: var(--t1); color: #fff; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0; transform: translateY(4px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 200; }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    @media (max-width: 800px) {
-      .score-check-grid { grid-template-columns: 1fr; }
-      .two-col, .assign-grid, .b-pair { grid-template-columns: 1fr; }
+    @media (max-width: 820px) {
+      .two-col, .assign-grid, .scoring-row, .eng-grid, .b-pair, .fit-outputs { grid-template-columns: 1fr; flex-direction: column; }
       .routing-flex { flex-direction: column; }
       .canvas { padding: 28px 18px 80px; }
       .legend { display: none; }
     }
-
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: #F1F5F9; }
     ::-webkit-scrollbar-thumb { background: var(--wire-light); border-radius: 3px; }
@@ -515,13 +307,12 @@
 </head>
 <body>
 
-<!-- ─── HEADER ─── -->
 <header class="hdr">
   <div class="hdr-left">
     <span class="hdr-logo">GovDash</span>
     <span class="hdr-sep">·</span>
     <span class="hdr-title">Discover → PLS Data Flow</span>
-    <span class="hdr-tag">v0.3 DRAFT</span>
+    <span class="hdr-tag">v0.4 DRAFT</span>
   </div>
   <div class="legend">
     <span class="leg"><span class="leg-dot" style="background:#1D4ED8"></span>Discover</span>
@@ -539,21 +330,14 @@
   </div>
 </header>
 
-
-<!-- ─── CANVAS ─── -->
 <div class="canvas">
 
-
-  <!-- ══════════════════ STEP 1 ══════════════════ -->
+  <!-- ══ STEP 1 ══ -->
   <div class="step-lbl"><span class="step-num">STEP 1</span>User Account Creation</div>
-
   <div class="node discover">
     <div class="node-stripe"></div>
     <div class="node-hd">
-      <div class="node-hd-left">
-        <span class="sys-badge">DISCOVER</span>
-        <span class="node-title">GovDash Discover — New User Signup</span>
-      </div>
+      <div class="node-hd-left"><span class="sys-badge">DISCOVER</span><span class="node-title">GovDash Discover — New User Signup</span></div>
       <span class="status-tag ok">✓ Defined</span>
     </div>
     <div class="node-body">
@@ -564,25 +348,18 @@
         <span class="chip"><span class="chip-dot"></span>Last Name <span class="chip-type">string</span></span>
         <span class="chip"><span class="chip-dot"></span>Email <span class="chip-type">email</span></span>
       </div>
-      <div class="note-bar">
-        <span class="note-icon">ℹ</span>
-        <span>These 4 fields trigger the Clay enrichment pipeline. All other data appended downstream.</span>
-      </div>
+      <div class="note-bar"><span style="font-size:12px">ℹ</span><span>These 4 fields trigger the Clay enrichment pipeline. All other data appended downstream.</span></div>
     </div>
   </div>
 
-
-  <!-- FORK → 2 Clay tables in parallel -->
+  <!-- Fork → 2 Clay tables -->
   <div class="fork-stem"><div class="fork-stem-line"></div></div>
   <div class="fork-bar"></div>
   <div class="fork-legs"><div class="fork-leg"></div><div class="fork-leg"></div></div>
 
-
-  <!-- ══════════════════ STEP 2 ══════════════════ -->
-  <div class="step-lbl"><span class="step-num">STEP 2</span>Clay Enrichment <span style="font-size:12px;font-weight:400;color:var(--t3)">&nbsp;runs in parallel</span></div>
-
+  <!-- ══ STEP 2 ══ -->
+  <div class="step-lbl"><span class="step-num">STEP 2</span>Clay Enrichment <span style="font-size:12px;font-weight:400;color:var(--t3)">&nbsp;— runs in parallel</span></div>
   <div class="two-col">
-
     <div class="node clay">
       <div class="node-stripe"></div>
       <div class="node-hd">
@@ -603,13 +380,9 @@
             <span class="chip"><span class="chip-dot"></span>Current Company Name <span class="chip-type">string</span></span>
           </div>
         </div>
-        <div class="note-bar">
-          <span class="note-icon">→</span>
-          <span><strong>Company Name</strong> triggers the Company Enrichment table in parallel.</span>
-        </div>
+        <div class="note-bar"><span>→</span><span><strong>Company Name</strong> triggers the Company Enrichment table in parallel.</span></div>
       </div>
     </div>
-
     <div class="node clay">
       <div class="node-stripe"></div>
       <div class="node-hd">
@@ -633,20 +406,16 @@
         </div>
       </div>
     </div>
-
   </div>
 
-
-  <!-- MERGE: 2 → 1 -->
+  <!-- Merge 2 → 1 -->
   <div class="merge-legs"><div class="merge-leg"></div><div class="merge-leg"></div></div>
   <div class="merge-bar"></div>
   <div class="merge-stem"><div class="merge-stem-line"></div></div>
   <div class="conn"><div class="conn-arrow"></div></div>
 
-
-  <!-- ══════════════════ STEPS 3 & 4 ══════════════════ -->
+  <!-- ══ STEPS 3–4 ══ -->
   <div class="step-lbl"><span class="step-num">STEPS 3–4</span>HubSpot Match, Sync &amp; Deduplication</div>
-
   <div class="node hubspot">
     <div class="node-stripe"></div>
     <div class="node-hd">
@@ -658,206 +427,155 @@
         <div>
           <div class="fg-lbl" style="margin-bottom:6px">Contact — Record exists?</div>
           <div class="decision-split">
-            <div class="ds-branch"><div class="ds-branch-lbl found">✓ Found</div><div class="ds-branch-txt">Update contact with enriched data</div></div>
+            <div class="ds-branch"><div class="ds-branch-lbl found">✓ Found</div><div class="ds-branch-txt">Update with enriched data</div></div>
             <div class="ds-branch"><div class="ds-branch-lbl create">✕ Not found</div><div class="ds-branch-txt">Create new contact record</div></div>
           </div>
         </div>
         <div>
           <div class="fg-lbl" style="margin-bottom:6px">Company — Record exists?</div>
           <div class="decision-split">
-            <div class="ds-branch"><div class="ds-branch-lbl found">✓ Found</div><div class="ds-branch-txt">Update company with enriched data</div></div>
+            <div class="ds-branch"><div class="ds-branch-lbl found">✓ Found</div><div class="ds-branch-txt">Update with enriched data</div></div>
             <div class="ds-branch"><div class="ds-branch-lbl create">✕ Not found</div><div class="ds-branch-txt">Create new company record</div></div>
           </div>
         </div>
       </div>
       <div class="dedup-badge">
-        <span>🔀</span>
-        <span><strong>Deduplication</strong> — match on email (exact) + company domain (fuzzy). Merge before write. Link contact → company.</span>
+        <span>🔀</span><span><strong>Deduplication</strong> — match on email (exact) + company domain (fuzzy). Merge before write. Link contact → company.</span>
       </div>
     </div>
   </div>
 
+  <div class="conn"><div class="conn-line" style="min-height:40px"></div><div class="conn-arrow"></div></div>
 
-  <div class="conn">
-    <div class="conn-line" style="min-height:40px"></div>
-    <div class="conn-arrow"></div>
-  </div>
-
-
-  <!-- ══════════════════ STEP 5 ══════════════════ -->
+  <!-- ══ STEP 5 ══ -->
   <div class="step-lbl"><span class="step-num">STEP 5</span>Check Lead Score</div>
 
   <div class="node scoring">
     <div class="node-stripe"></div>
     <div class="node-hd">
-      <div class="node-hd-left">
-        <span class="sys-badge">SCORING</span>
-        <span class="node-title">Lead Score = Fit Score + Intent Score</span>
-      </div>
+      <div class="node-hd-left"><span class="sys-badge">SCORING</span><span class="node-title">Lead Score = Fit Score + Intent Score</span></div>
       <span class="status-tag warn">⚠ Weights TBD</span>
     </div>
 
-    <!-- 3-column internal: Engagement | Fit | Intent -->
-    <div class="score-check-grid">
-
-      <!-- ── Engagement Tracking (context for engineers) ── -->
-      <div class="score-check-section">
-        <div class="section-title"><span class="section-title-icon">📡</span>Engagement Tracking <span style="font-size:10px;font-weight:400;color:var(--t3)">— data inputs</span></div>
-
-        <div class="fg">
+    <!-- ── Top: Engagement Tracking context ── -->
+    <div class="eng-section">
+      <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:12px;display:flex;align-items:center;gap:7px">
+        <span style="font-size:14px">📡</span>Engagement Tracking
+        <span style="font-size:11px;font-weight:400;color:var(--t3)">— data inputs for scoring (for engineering reference)</span>
+      </div>
+      <div class="eng-grid">
+        <div>
           <div class="fg-lbl" style="color:var(--scoring)">⏱ Recency signals</div>
           <div class="chips" style="--accent:var(--scoring);--muted:var(--scoring-muted)">
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Created At <span class="chip-type">datetime</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Last Login At <span class="chip-type">datetime</span></span>
           </div>
-          <div class="eng-add-block" style="margin-top:8px">
-            <div class="eng-add-hd">📝 Engineers — add more recency signals</div>
-            <div class="eng-editable editable" contenteditable="true" data-key="engagement-recency-extra"
-              data-ph="E.g., Last feature used, session duration, login frequency…"></div>
-          </div>
+          <div class="eng-add-block"><div class="eng-add-hd">📝 Add more recency signals</div><div class="eng-editable editable" contenteditable="true" data-key="engagement-recency-extra" data-ph="E.g., last feature used, session duration, login frequency…"></div></div>
         </div>
-
-        <div class="fg" style="margin-top:14px">
-          <div class="fg-lbl" style="color:var(--scoring)">📊 Activity signals (intent inputs)</div>
+        <div>
+          <div class="fg-lbl" style="color:var(--scoring)">📊 Activity signals</div>
           <div class="chips" style="--accent:var(--scoring);--muted:var(--scoring-muted)">
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Likes <span class="chip-type">num</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Dislikes <span class="chip-type">num</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Clicks <span class="chip-type">num</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Add to Pipeline <span class="chip-type">num</span></span>
           </div>
-          <div class="eng-add-block" style="margin-top:8px">
-            <div class="eng-add-hd">📝 Engineers — add more activity signals</div>
-            <div class="eng-editable editable" contenteditable="true" data-key="engagement-activity-extra"
-              data-ph="E.g., searches performed, solicitations viewed, filters used…"></div>
-          </div>
+          <div class="eng-add-block"><div class="eng-add-hd">📝 Add more activity signals</div><div class="eng-editable editable" contenteditable="true" data-key="engagement-activity-extra" data-ph="E.g., searches performed, solicitations viewed, filters applied…"></div></div>
         </div>
       </div>
+    </div>
 
-      <!-- ── Fit Score (ICP definition) ── -->
-      <div class="score-check-section">
-        <div class="section-title"><span class="section-title-icon">🎯</span>Fit Score <span style="font-size:10px;font-weight:400;color:var(--t3)">— ICP qualification</span></div>
+    <!-- ── Bottom: Fit Score | Intent Score ── -->
+    <div class="scoring-row">
 
+      <!-- Fit Score -->
+      <div class="score-panel">
+        <div class="score-panel-title"><span class="score-panel-title-icon">🎯</span>Fit Score <span style="font-size:11px;font-weight:400;color:var(--t3)">— ICP qualification</span></div>
         <div class="fg-lbl" style="color:var(--scoring)">ICP = ANY of the following</div>
         <div class="icp-wrap">
           <div class="icp-row">
-            <span class="icp-connector">IF</span>
-            <span class="icp-prop">TTM Federal Revenue</span>
-            <span class="icp-op">≥</span>
-            <span class="icp-val">$10M</span>
+            <span class="icp-conn">IF</span><span class="icp-prop">TTM Federal Revenue</span><span class="icp-op">≥</span><span class="icp-val">$10M</span>
           </div>
           <div class="icp-row">
-            <span class="icp-connector">OR</span>
-            <span class="icp-prop">USA Spending Federal Revenue Range</span>
-            <span class="icp-op">≥</span>
-            <span class="icp-val">$10M</span>
+            <span class="icp-conn">OR</span><span class="icp-prop">USA Spending Federal Revenue Range</span><span class="icp-op">≥</span><span class="icp-val">$10M</span>
           </div>
           <div class="icp-row">
-            <span class="icp-connector">OR</span>
-            <span class="icp-prop">Account Tier</span>
-            <span class="icp-op">≠</span>
-            <span class="icp-val">Tier 8</span>
+            <span class="icp-conn">OR</span><span class="icp-prop">Account Tier</span><span class="icp-op">≠</span><span class="icp-val">Tier 8</span>
           </div>
         </div>
-        <div class="icp-result">✓ ICP Qualified</div>
-        <div style="margin-top:10px;padding:7px 10px;border-radius:6px;background:#FEF2F2;border:1px solid #FECACA;font-size:10px;color:#991B1B;text-align:center;font-weight:500">
-          ✕ Non-ICP → Route C
+        <!-- Fit Score outputs → visually link to routing -->
+        <div class="fit-outputs">
+          <div class="fit-out icp">
+            <div class="fit-out-label">✓ ICP Qualified</div>
+            <div class="fit-out-dest">→ Routing A or B</div>
+          </div>
+          <div class="fit-out non-icp">
+            <div class="fit-out-label">✗ Non-ICP</div>
+            <div class="fit-out-dest">→ Routing C</div>
+          </div>
         </div>
       </div>
 
-      <!-- ── Intent Score (editable weights) ── -->
-      <div class="score-check-section">
-        <div class="section-title"><span class="section-title-icon">⚡</span>Intent Score <span style="font-size:10px;font-weight:400;color:var(--t3)">— define weights</span></div>
-
-        <div class="fg-lbl" style="color:var(--scoring)">Signal weights (editable)</div>
-
-        <div class="weight-row">
-          <span>Add to Pipeline count</span>
-          <div class="weight-input-wrap">
-            <div class="weight-field editable" contenteditable="true" data-key="iw-pipeline" data-ph="—"></div>
-            <span class="weight-unit">pts</span>
-          </div>
-        </div>
-        <div class="weight-row">
-          <span>Click count</span>
-          <div class="weight-input-wrap">
-            <div class="weight-field editable" contenteditable="true" data-key="iw-click" data-ph="—"></div>
-            <span class="weight-unit">pts</span>
-          </div>
-        </div>
-        <div class="weight-row">
-          <span>Like count</span>
-          <div class="weight-input-wrap">
-            <div class="weight-field editable" contenteditable="true" data-key="iw-like" data-ph="—"></div>
-            <span class="weight-unit">pts</span>
-          </div>
-        </div>
-        <div class="weight-row">
-          <span>Last Login recency</span>
-          <div class="weight-input-wrap">
-            <div class="weight-field editable" contenteditable="true" data-key="iw-recency" data-ph="—"></div>
-            <span class="weight-unit">pts</span>
-          </div>
-        </div>
-        <div class="weight-row">
-          <span>Dislike count</span>
-          <div class="weight-input-wrap">
-            <div class="weight-field editable" contenteditable="true" data-key="iw-dislike" data-ph="—"></div>
-            <span class="weight-unit">pts</span>
-          </div>
-        </div>
-
-        <div class="intent-extra" style="margin-top:10px">
+      <!-- Intent Score -->
+      <div class="score-panel">
+        <div class="score-panel-title"><span class="score-panel-title-icon">⚡</span>Intent Score <span style="font-size:11px;font-weight:400;color:var(--t3)">— define weights</span></div>
+        <div class="fg-lbl" style="color:var(--scoring)">Signal weights (click to edit)</div>
+        <div class="weight-row"><span>Add to Pipeline count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-pipeline" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
+        <div class="weight-row"><span>Click count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-click" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
+        <div class="weight-row"><span>Like count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-like" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
+        <div class="weight-row"><span>Last Login recency</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-recency" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
+        <div class="weight-row"><span>Dislike count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-dislike" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
+        <div class="intent-extra">
           <div class="intent-extra-hd">📝 Add more signals + weights</div>
-          <div class="intent-extra-body">
-            <div class="editable" contenteditable="true" data-key="iw-extra"
-              data-ph="E.g., Pages visited = 1 pt, Feature activated = 3 pts…"></div>
-          </div>
+          <div class="intent-extra-body"><div class="editable" contenteditable="true" data-key="iw-extra" data-ph="E.g., pages visited = 1 pt, feature activated = 3 pts…"></div></div>
         </div>
-
-        <div style="margin-top:10px;padding:7px 10px;border-radius:6px;background:var(--scoring-muted);border:1px solid #C4B5FD;font-size:10px;color:#4C1D95">
-          <strong>Threshold TBD</strong> → score above threshold = High Intent (B1) · below = Low Intent (B2)
+        <div style="margin-top:10px;padding:8px 10px;border-radius:6px;background:var(--scoring-muted);border:1px solid #C4B5FD;font-size:11px;color:#4C1D95">
+          <strong>Threshold TBD</strong> — score above = High Intent (B1) · below = Low Intent (B2)
         </div>
       </div>
 
-    </div><!-- /score-check-grid -->
+    </div><!-- /scoring-row -->
 
-    <div class="output-note">
-      <strong>Output:</strong> ICP qualified → enter routing · Non-ICP → C (Educate) · High Intent ICP → B1 · Low Intent ICP → B2
+    <div class="score-output">
+      <strong>Output:</strong> ICP + High Intent → B1 &nbsp;·&nbsp; ICP + Low Intent → B2 &nbsp;·&nbsp; Non-ICP → C &nbsp;·&nbsp; "Talk to Sales" CTA → A (bypasses scoring)
     </div>
   </div><!-- /node scoring -->
 
 
-  <div class="conn">
-    <div class="conn-line" style="min-height:40px"></div>
-    <div class="conn-arrow"></div>
+  <!-- ── Visual bridge: Fit Score outputs → Routing A/B and C ── -->
+  <!-- Stem from center of node -->
+  <div class="conn"><div class="conn-line" style="min-height:16px"></div></div>
+  <!-- Fork split: ICP (left 75%, → A+B) and Non-ICP (right 25%, → C) -->
+  <div class="fit-routing-bridge">
+    <div class="frb-col icp-col">
+      <div class="frb-leg icp-leg"></div>
+      <div class="frb-label icp-lbl">ICP Qualified ✓ &nbsp;→&nbsp; Routing A or B</div>
+      <div class="frb-leg icp-leg"></div>
+    </div>
+    <div class="frb-col non-icp-col">
+      <div class="frb-leg non-icp-leg"></div>
+      <div class="frb-label non-icp-lbl">Non-ICP ✗ → C</div>
+      <div class="frb-leg non-icp-leg"></div>
+    </div>
+  </div>
+  <!-- Legs going down from each branch to routing cards -->
+  <div style="display:flex;gap:10px">
+    <div style="flex:3;display:flex;justify-content:center"><div style="width:2px;height:20px;background:#6EE7B7"></div></div>
+    <div style="flex:1;display:flex;justify-content:center"><div style="width:2px;height:20px;background:#FECACA"></div></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:4px">
+    <div style="flex:3;display:flex;justify-content:center"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #6EE7B7"></div></div>
+    <div style="flex:1;display:flex;justify-content:center"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #FECACA"></div></div>
   </div>
 
 
-  <!-- ══════════════════ STEP 6 ══════════════════ -->
+  <!-- ══ STEP 6 ══ -->
   <div class="step-lbl"><span class="step-num">STEP 6</span>Lead Routing Decision</div>
 
-  <!-- Routing diamond -->
-  <div class="diamond-wrap">
-    <svg width="150" height="68" viewBox="0 0 150 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="75,4 146,34 75,64 4,34" fill="#D1FAE5" stroke="#047857" stroke-width="1.5"/>
-      <text x="75" y="30" text-anchor="middle" font-family="Lexend Deca, sans-serif" font-size="11" font-weight="600" fill="#065F46">Route Lead?</text>
-      <text x="75" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#047857">ICP? · Intent score?</text>
-    </svg>
-  </div>
-
-  <!-- Triple fork: diamond → A, B, C -->
-  <div class="tf-stem"><div class="tf-stem-line"></div></div>
-  <div class="tf-bar"></div>
-  <div class="tf-legs">
-    <div><div class="tf-leg"></div></div>
-    <div><div class="tf-leg"></div></div>
-    <div><div class="tf-leg"></div></div>
-  </div>
-
-  <!-- ── Level 1: A | B | C ── -->
+  <!-- Routing flex: A (flex:1) | B-group (flex:2) | C (flex:1) — all stretch to same height -->
   <div class="routing-flex">
 
-    <!-- A: Talk to Sales CTA -->
+    <!-- ── A: Talk to Sales CTA ── -->
     <div class="r-col">
       <div class="rb-card hot">
         <div class="rb-stripe"></div>
@@ -867,13 +585,15 @@
         </div>
         <div class="rb-body">
           <div class="rb-outcome">Immediate Outreach</div>
-          <div class="rb-detail">Auto-email from CRM or RevenueHero booking link. No score check needed.</div>
+          <div class="rb-detail">Auto-email from CRM or RevenueHero booking link. No score check needed — bypasses Step 5.</div>
           <div class="goto-badge to-step">→ Goes to Step 7 ↓</div>
         </div>
       </div>
+      <!-- Vertical leg filling remaining column height (matching B-group height) -->
+      <div class="col-leg"><div class="col-leg-line"></div></div>
     </div>
 
-    <!-- B: ICP — Nurture (parent, with B1/B2 below) -->
+    <!-- ── B: ICP — Nurture (parent → B1, B2) ── -->
     <div class="r-col b-group">
       <div class="rb-card warm">
         <div class="rb-stripe"></div>
@@ -883,92 +603,85 @@
         </div>
         <div class="rb-body">
           <div class="rb-outcome">Nurture through marketing emails</div>
-          <div class="rb-detail">Lead scored weekly. Routing tier (B1 vs B2) determined by Intent Score at each weekly check.</div>
-          <div class="loop-back">
-            <span class="loop-icon">↩</span>
-            <div><strong>Weekly cadence:</strong> Re-run score check at Step 5. If intent threshold changes, lead moves between B1 ↔ B2.</div>
-          </div>
+          <div class="rb-detail">Routing tier (B1 vs B2) determined by Intent Score, checked on a weekly cadence.</div>
+          <div class="loop-back"><span class="loop-icon">↩</span><div><strong>Weekly:</strong> Re-run Step 5 score check. Intent score change moves lead between B1 ↔ B2.</div></div>
         </div>
       </div>
-
-      <!-- B fork → B1, B2 -->
+      <!-- B fork connector → B1, B2 -->
       <div class="b-fork-stem"><div class="b-fork-stem-line"></div></div>
       <div class="b-fork-bar"></div>
       <div class="b-fork-legs"><div class="b-fork-leg"></div><div class="b-fork-leg"></div></div>
-
-      <!-- B1 + B2 -->
+      <!-- B1 + B2 sub-cards — flex, stretch to same height -->
       <div class="b-pair">
 
         <!-- B1: High Intent -->
-        <div class="sub-card b1">
-          <div class="sub-stripe"></div>
-          <div class="sub-hd">
-            <div class="sub-letter">B1 · HIGH INTENT</div>
-            <div class="sub-condition">Intent ≥ threshold</div>
-          </div>
-          <div class="sub-body">
-            <div class="sub-outcome">4-Email Nurture → Route to Sales</div>
-            <div class="email-seq">
-              <div class="email-item"><span class="email-num">01</span>Intro / value email</div>
-              <div class="email-gap">↓ +3 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">02</span>Use-case spotlight</div>
-              <div class="email-gap">↓ +3 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">03</span>Social proof / case study</div>
-              <div class="email-trigger">⚡ Route check after Email 3 → if still B1 → goes to Step 7</div>
-              <div class="email-gap">↓ +3 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">04</span>Final CTA email</div>
+        <div class="b-pair-col">
+          <div class="sub-card b1">
+            <div class="sub-stripe"></div>
+            <div class="sub-hd">
+              <div class="sub-letter">B1 · HIGH INTENT</div>
+              <div class="sub-condition">Intent ≥ threshold</div>
             </div>
-            <div class="cadence-block">
-              <div class="cadence-hd">📝 Edit: time between first email out</div>
-              <div class="cadence-body">
-                <div class="cadence-editable editable" contenteditable="true" data-key="b1-cadence"
-                  data-ph="E.g., delay before Email 01 sends after signup, trigger conditions…"></div>
+            <div class="sub-body">
+              <div class="sub-outcome">4-Email Nurture → Route to Sales</div>
+              <div class="email-seq">
+                <div class="email-item"><span class="email-num">01</span>Intro / value email</div>
+                <div class="email-gap">↓ +3 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">02</span>Use-case spotlight</div>
+                <div class="email-gap">↓ +3 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">03</span>Social proof / case study</div>
+                <div class="email-trigger">⚡ Routing check after Email 03 — if still B1, route to Step 7</div>
+                <div class="email-gap">↓ +3 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">04</span>Final CTA email</div>
               </div>
+              <div class="cadence-block">
+                <div class="cadence-hd">📝 Edit: time before first email sends</div>
+                <div class="cadence-body"><div class="cadence-editable editable" contenteditable="true" data-key="b1-cadence" data-ph="E.g., delay after signup, trigger conditions…"></div></div>
+              </div>
+              <div class="goto-badge to-step" style="margin-top:10px">→ Goes to Step 7 ↓</div>
             </div>
-            <div class="goto-badge to-step" style="margin-top:8px">→ Goes to Step 7 ↓</div>
           </div>
+          <!-- B1 leg fills remaining height to match B2 -->
+          <div class="col-leg"><div class="col-leg-line"></div></div>
         </div>
 
         <!-- B2: Low Intent -->
-        <div class="sub-card b2">
-          <div class="sub-stripe"></div>
-          <div class="sub-hd">
-            <div class="sub-letter">B2 · LOW INTENT</div>
-            <div class="sub-condition">Intent &lt; threshold</div>
-          </div>
-          <div class="sub-body">
-            <div class="sub-outcome">6-Email Nurture → Loop Back</div>
-            <div class="email-seq">
-              <div class="email-item"><span class="email-num">01</span>Welcome / product overview</div>
-              <div class="email-gap">↓ +7 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">02</span>Feature education</div>
-              <div class="email-gap">↓ +7 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">03</span>Use-case deep dive</div>
-              <div class="email-gap">↓ +7 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">04</span>Customer success story</div>
-              <div class="email-gap">↓ +7 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">05</span>Product spotlight</div>
-              <div class="email-gap">↓ +7 days (skip weekends)</div>
-              <div class="email-item"><span class="email-num">06</span>Re-engagement CTA</div>
+        <div class="b-pair-col">
+          <div class="sub-card b2">
+            <div class="sub-stripe"></div>
+            <div class="sub-hd">
+              <div class="sub-letter">B2 · LOW INTENT</div>
+              <div class="sub-condition">Intent &lt; threshold</div>
             </div>
-            <div class="cadence-block">
-              <div class="cadence-hd">📝 Edit: time between first email out</div>
-              <div class="cadence-body">
-                <div class="cadence-editable editable" contenteditable="true" data-key="b2-cadence"
-                  data-ph="E.g., delay before Email 01, trigger conditions, re-enrollment rules…"></div>
+            <div class="sub-body">
+              <div class="sub-outcome">6-Email Nurture → Loop Back</div>
+              <div class="email-seq">
+                <div class="email-item"><span class="email-num">01</span>Welcome / product overview</div>
+                <div class="email-gap">↓ +7 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">02</span>Feature education</div>
+                <div class="email-gap">↓ +7 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">03</span>Use-case deep dive</div>
+                <div class="email-gap">↓ +7 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">04</span>Customer success story</div>
+                <div class="email-gap">↓ +7 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">05</span>Product spotlight</div>
+                <div class="email-gap">↓ +7 days (skip weekends)</div>
+                <div class="email-item"><span class="email-num">06</span>Re-engagement CTA</div>
               </div>
-            </div>
-            <div class="loop-back" style="margin-top:8px">
-              <span class="loop-icon">↩</span>
-              <div>After sequence → loop back to <strong>Step 5</strong> to recheck Intent Score.</div>
+              <div class="cadence-block">
+                <div class="cadence-hd">📝 Edit: time before first email sends</div>
+                <div class="cadence-body"><div class="cadence-editable editable" contenteditable="true" data-key="b2-cadence" data-ph="E.g., delay after signup, re-enrollment rules…"></div></div>
+              </div>
+              <div class="loop-back" style="margin-top:10px"><span class="loop-icon">↩</span><div>After sequence → loop back to <strong>Step 5</strong> to recheck Intent Score. Weekly cadence also refreshes.</div></div>
             </div>
           </div>
+          <!-- B2 has no downward connector — loops back -->
         </div>
 
       </div><!-- /b-pair -->
     </div><!-- /b-group -->
 
-    <!-- C: Non-ICP — Educate -->
+    <!-- ── C: Non-ICP — Educate ── -->
     <div class="r-col">
       <div class="rb-card cold">
         <div class="rb-stripe"></div>
@@ -979,7 +692,7 @@
         <div class="rb-body">
           <div class="rb-outcome">Educate</div>
           <div class="rb-detail">3-email educational sequence. No sales outreach.</div>
-          <div class="email-seq" style="margin-top:8px">
+          <div class="email-seq" style="margin-top:10px">
             <div class="email-item"><span class="email-num">01</span>Intro / value email</div>
             <div class="email-gap">↓ +7 days (skip weekends)</div>
             <div class="email-item"><span class="email-num">02</span>Use-case / feature spotlight</div>
@@ -988,38 +701,39 @@
           </div>
           <div class="loop-back" style="margin-top:10px">
             <span class="loop-icon">↩</span>
-            <div>
-              <strong>Quarterly cadence:</strong> Update TTM Federal Revenue → recheck Fit Score at Step 5.
-              If ICP threshold now met → exit C, re-enter Step 6 routing (A / B1 / B2).
-            </div>
+            <div><strong>Quarterly:</strong> Update TTM Federal Revenue → recheck Fit Score at Step 5. If ICP now met → re-enter routing A / B1 / B2.</div>
           </div>
         </div>
       </div>
+      <!-- C has no downward connector — loops back -->
     </div>
 
   </div><!-- /routing-flex -->
 
 
-  <!-- ── Merge: A (col 1) + B1 (left half of col 2) → Step 7 ── -->
-  <!-- Approximate percentages: A center ≈ 12.5%, B1 center ≈ 37.5% of total -->
-  <div style="position:relative;height:32px;margin-top:4px">
-    <div style="position:absolute;left:12.5%;margin-left:-1px;top:0;width:2px;height:32px;background:var(--wire-light)"></div>
-    <div style="position:absolute;left:37.5%;margin-left:-1px;top:0;width:2px;height:32px;background:var(--wire-light)"></div>
-  </div>
-  <div style="position:relative;height:2px">
+  <!-- ── Merge connector: A (col leg) + B1 (col leg) → Step 7 ──
+       A center ≈ 12.5% of total | B1 center ≈ 37.5% of total
+       Both col-leg lines end at the same level (routing-flex stretches all columns to equal height)
+  -->
+  <!-- Horizontal bar from A center to B1 center -->
+  <div style="position:relative;height:2px;margin-top:0">
     <div style="position:absolute;left:12.5%;right:62.5%;top:0;height:2px;background:var(--wire-light)"></div>
   </div>
-  <div style="position:relative;height:20px">
-    <div style="position:absolute;left:25%;margin-left:-1px;top:0;width:2px;height:20px;background:var(--wire-light)"></div>
+  <!-- Stem down from midpoint (25%) -->
+  <div style="position:relative;height:24px">
+    <div style="position:absolute;left:25%;margin-left:-1px;top:0;width:2px;height:24px;background:var(--wire-light)"></div>
   </div>
+  <!-- Arrow -->
   <div style="position:relative;height:8px">
     <div style="position:absolute;left:25%;margin-left:-6px;top:0;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid var(--wire)"></div>
   </div>
 
 
-  <!-- ══════════════════ STEP 7 ══════════════════ -->
-  <div class="step-lbl" style="width:50%"><span class="step-num">STEP 7</span>SDR / AE Assignment <span style="font-size:11px;font-weight:400;color:var(--t3)">&nbsp;— A and B1 only</span></div>
-
+  <!-- ══ STEP 7 ══ -->
+  <div class="step-lbl" style="width:50%">
+    <span class="step-num">STEP 7</span>SDR / AE Assignment
+    <span style="font-size:11px;font-weight:400;color:var(--t3)">&nbsp;— A and B1 only</span>
+  </div>
   <div style="width:50%">
     <div class="node routing">
       <div class="node-stripe"></div>
@@ -1035,13 +749,12 @@
           </div>
           <div class="assign-card">
             <div class="ac-lbl none">No previous owner</div>
-            <div class="ac-body"><strong>Round Robin</strong> → assign next SDR. Set ownership on contact + company.</div>
+            <div class="ac-body"><strong>Round Robin</strong> → assign next available SDR. Set ownership on contact + company.</div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 
 </div><!-- /canvas -->
 
