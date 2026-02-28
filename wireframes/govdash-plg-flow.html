@@ -103,6 +103,9 @@
     .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--t2); background: var(--muted); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
     .chip-type { font-size: 8px; color: var(--t3); margin-left: 1px; }
     .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .chip-add { background: transparent; border-style: dashed; border-color: color-mix(in srgb, var(--accent) 35%, transparent); cursor: text; min-width: 72px; color: var(--t2); outline: none; }
+    .chip-add:empty::before { content: attr(data-ph); color: var(--t3); pointer-events: none; }
+    .chip-add:focus { border-style: solid; border-color: var(--accent); background: var(--muted); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 12%, transparent); }
 
     /* ─── MISC ─── */
     .fg { margin-bottom: 14px; }
@@ -474,7 +477,10 @@
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Created At <span class="chip-type">datetime</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Last Login At <span class="chip-type">datetime</span></span>
           </div>
-          <div class="eng-add-block"><div class="eng-add-hd">📝 Add more recency signals</div><div class="eng-editable editable" contenteditable="true" data-key="engagement-recency-extra" data-ph="E.g., last feature used, session duration, login frequency…"></div></div>
+          <div class="chips" style="--accent:var(--scoring);--muted:var(--scoring-muted);margin-top:5px">
+            <span class="chip chip-add" contenteditable="true" data-key="recency-extra-1" data-ph="＋ field…"></span>
+            <span class="chip chip-add" contenteditable="true" data-key="recency-extra-2" data-ph="＋ field…"></span>
+          </div>
         </div>
         <div>
           <div class="fg-lbl" style="color:var(--scoring)">📊 Activity signals</div>
@@ -483,8 +489,12 @@
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Dislikes <span class="chip-type">num</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Solic. Clicks <span class="chip-type">num</span></span>
             <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Add to Pipeline <span class="chip-type">num</span></span>
+            <span class="chip"><span class="chip-dot" style="background:var(--scoring)"></span>Impressions <span class="chip-type">num</span></span>
           </div>
-          <div class="eng-add-block"><div class="eng-add-hd">📝 Add more activity signals</div><div class="eng-editable editable" contenteditable="true" data-key="engagement-activity-extra" data-ph="E.g., searches performed, solicitations viewed, filters applied…"></div></div>
+          <div class="chips" style="--accent:var(--scoring);--muted:var(--scoring-muted);margin-top:5px">
+            <span class="chip chip-add" contenteditable="true" data-key="activity-extra-1" data-ph="＋ field…"></span>
+            <span class="chip chip-add" contenteditable="true" data-key="activity-extra-2" data-ph="＋ field…"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -527,12 +537,8 @@
         <div class="weight-row"><span>Add to Pipeline count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-pipeline" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
         <div class="weight-row"><span>Click count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-click" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
         <div class="weight-row"><span>Like count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-like" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
-        <div class="weight-row"><span>Last Login recency</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-recency" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
+        <div class="weight-row"><span>Impressions</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-recency" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
         <div class="weight-row"><span>Dislike count</span><div class="weight-input-wrap"><div class="weight-field editable" contenteditable="true" data-key="iw-dislike" data-ph="—"></div><span class="weight-unit">pts</span></div></div>
-        <div class="intent-extra">
-          <div class="intent-extra-hd">📝 Add more signals + weights</div>
-          <div class="intent-extra-body"><div class="editable" contenteditable="true" data-key="iw-extra" data-ph="E.g., pages visited = 1 pt, feature activated = 3 pts…"></div></div>
-        </div>
         <div style="margin-top:10px;padding:8px 10px;border-radius:6px;background:var(--scoring-muted);border:1px solid #C4B5FD;font-size:11px;color:#4C1D95">
           <strong>Threshold TBD</strong> — score above = High Intent (B1) · below = Low Intent (B2)
         </div>
@@ -831,16 +837,13 @@
   }
 
   // ─── UNIVERSAL CLICK-TO-EDIT ───
-  const _CE_SKIP_TAGS = new Set(['SCRIPT','STYLE','SVG','PATH','HR','BR','IMG','INPUT','SELECT','TEXTAREA','BUTTON','A','HEADER','FOOTER','NAV','DIV','SECTION','ARTICLE']);
+  const _CE_SKIP_TAGS = new Set(['SCRIPT','STYLE','SVG','PATH','HR','BR','IMG','INPUT','SELECT','TEXTAREA','BUTTON','A','HEADER','FOOTER','NAV']);
   const _CE_SKIP_CLS  = new Set([
-    'step-num','sys-badge','chip-dot','email-num','icp-op','icp-conn',
+    'step-num','sys-badge','chip-dot','chip-type','email-num','icp-op','icp-conn',
     'col-leg-line','col-leg','fork-leg','merge-leg','b-fork-leg','frb-leg',
     'conn-arrow','weight-unit','live-dot','live-status','rb-stripe',
-    'node-stripe','sub-stripe','toast','canvas','step-lbl','loop-icon',
-    'routing-flex','r-col','assign-grid','scoring-row','eng-section',
-    'icp-criteria','b-pair','b-pair-col','fit-routing-bridge','frb-col',
-    'weight-input-wrap','node-hd','node-hd-left','node-body','node',
-    'email-list','loop-back','assign-card','ac-body','ac-lbl'
+    'node-stripe','sub-stripe','loop-icon','step-lbl',
+    'weight-input-wrap','fit-routing-bridge'
   ]);
 
   function _ceStableKey(el) {
