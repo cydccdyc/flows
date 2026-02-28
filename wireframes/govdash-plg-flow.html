@@ -618,7 +618,6 @@
         <div class="rb-body">
           <div class="rb-outcome">Nurture through marketing emails</div>
           <div class="rb-detail">Routing tier (B1 vs B2) determined by Intent Score, checked on a weekly cadence.</div>
-          <div class="loop-back"><span class="loop-icon">↩</span><div><strong>Weekly:</strong> Re-run Step 5 score check. Intent score change moves lead between B1 ↔ B2.</div></div>
         </div>
       </div>
       <!-- B fork connector → B1, B2 -->
@@ -686,7 +685,6 @@
                 <div class="cadence-hd">📝 Edit: time before first email sends</div>
                 <div class="cadence-body"><div class="cadence-editable editable" contenteditable="true" data-key="b2-cadence" data-ph="E.g., delay after signup, re-enrollment rules…"></div></div>
               </div>
-              <div class="loop-back" style="margin-top:10px"><span class="loop-icon">↩</span><div>After sequence → loop back to <strong>Step 5</strong> to recheck Intent Score. Weekly cadence also refreshes.</div></div>
             </div>
           </div>
           <!-- B2 has no downward connector — loops back -->
@@ -712,10 +710,6 @@
             <div class="email-item"><span class="email-num">02</span>Use-case / feature spotlight</div>
             <div class="email-gap">↓ +7 days (skip weekends)</div>
             <div class="email-item"><span class="email-num">03</span>Product education email</div>
-          </div>
-          <div class="loop-back" style="margin-top:10px">
-            <span class="loop-icon">↩</span>
-            <div><strong>Quarterly:</strong> Update TTM Federal Revenue → recheck Fit Score at Step 5. If ICP now met → re-enter routing A / B1 / B2.</div>
           </div>
         </div>
       </div>
@@ -953,11 +947,11 @@
     });
     svg.appendChild(defs);
 
-    // Rails run just outside the right edge of the routing section
+    // Rails run outside the right edge of the routing section — spread apart for clarity
     const maxRight = Math.max(c.right, b2.right);
-    const railB2 = maxRight + 20;
-    const railC  = maxRight + 40;
-    const R = 10; // corner radius
+    const railB2 = maxRight + 24;
+    const railC  = maxRight + 56;
+    const R = 12; // corner radius
 
     function addLoop(x0, y0, rail, entryY, color, markerId, label) {
       const d = [
@@ -1003,8 +997,9 @@
       svg.appendChild(txt);
     }
 
-    addLoop(b2.right, b2.midY, railB2, s5.midY + 12, '#F59E0B', 'lp-b2', 'WEEKLY');
-    addLoop(c.right,  c.midY,  railC,  s5.midY + 30, '#7C3AED', 'lp-c',  'QUARTERLY');
+    // Exit from card bottoms, enter near top of Step 5
+    addLoop(b2.right, b2.bot, railB2, s5.top + 28, '#F59E0B', 'lp-b2', 'WEEKLY');
+    addLoop(c.right,  c.bot,  railC,  s5.top + 54, '#7C3AED', 'lp-c',  'QUARTERLY');
 
     canvas.appendChild(svg);
   }
