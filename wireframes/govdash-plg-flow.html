@@ -319,7 +319,7 @@
   <div class="hdr-left">
     <span class="hdr-logo">GovDash</span>
     <span class="hdr-sep">·</span>
-    <span class="hdr-title">Discover → PLS Data Flow</span>
+    <span class="hdr-title">Discover PLG Flow</span>
     <span class="hdr-tag">v0.4 DRAFT</span>
   </div>
   <div class="legend">
@@ -791,12 +791,12 @@
     function saveAll() {
       const data = {};
       document.querySelectorAll('[data-key]').forEach(el => { data[el.dataset.key] = el.innerHTML; });
-      localStorage.setItem('pls-flow-v1', JSON.stringify(data));
+      localStorage.setItem('plg-flow-v1', JSON.stringify(data));
       showToast('✓ Saved locally');
     }
     (function loadAll() {
       try {
-        const raw = localStorage.getItem('pls-flow-v1');
+        const raw = localStorage.getItem('plg-flow-v1');
         if (!raw) return;
         const data = JSON.parse(raw);
         _ceData = data;
@@ -809,7 +809,7 @@
   } else {
     firebase.initializeApp(firebaseConfig);
     const db  = firebase.database();
-    REF = db.ref('pls-flow/fields');
+    REF = db.ref('plg-flow/fields');
 
     firebase.database().ref('.info/connected').on('value', snap => {
       setStatus(snap.val() ? 'online' : 'offline', snap.val() ? 'Live — syncing' : 'Reconnecting…');
