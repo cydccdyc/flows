@@ -1,2 +1,7 @@
 [build]
   publish = "wireframes"
+
+[[redirects]]
+  from = "/"
+  to = "/govdash-plg-flow.html"
+  status = 302
