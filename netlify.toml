@@ -5,3 +5,4 @@
   from = "/"
   to = "/govdash-plg-flow.html"
   status = 302
+  force = true
