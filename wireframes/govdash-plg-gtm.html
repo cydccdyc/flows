@@ -429,6 +429,61 @@
   </style>
 </head>
 <body>
-<div class="canvas"></div>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-logo">GovDash</span>
+    <span class="hdr-sep">/</span>
+    <span class="hdr-title">Discover PLG — Lead Generation</span>
+    <span class="hdr-tag">GTM VIEW</span>
+    <span class="hdr-tag" style="background:#D1FAE5;color:#065F46;border-color:#6EE7B7">PHASE 1 · LIVE</span>
+  </div>
+  <div class="hdr-right">
+    <div class="live-pill">
+      <div class="live-dot" id="liveDot"></div>
+      <span id="liveLabel">Connecting…</span>
+    </div>
+    <button class="save-btn" onclick="saveAll()">Save ⌘S</button>
+  </div>
+</header>
+
+<div class="canvas">
+
+  <div class="step-lbl"><span class="step-num">STEP 1</span>GovDash Discover Platform</div>
+
+  <div class="node discover">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">PRODUCT</span>
+        <span class="node-title">GovDash Discover</span>
+      </div>
+      <span class="status-tag ok">✓ Live</span>
+    </div>
+    <div class="node-body">
+      <div class="fg">
+        <div class="fg-lbl">What is Discover?</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px">
+          A freemium government contracting intelligence platform. Agencies and contractors can search solicitations, track opportunities, and manage their pipeline — all for free. This is GovDash's product-led growth (PLG) motion: prospects experience the product before speaking to sales.
+        </p>
+      </div>
+      <div class="fg">
+        <div class="fg-lbl">Key features (signals we track)</div>
+        <div class="chips" style="--accent:var(--discover);--muted:var(--discover-muted)">
+          <span class="chip"><span class="chip-dot" style="background:var(--discover)"></span>Solicitation Search</span>
+          <span class="chip"><span class="chip-dot" style="background:var(--discover)"></span>Add to Pipeline</span>
+          <span class="chip"><span class="chip-dot" style="background:var(--discover)"></span>Solicitation Likes / Dislikes</span>
+          <span class="chip"><span class="chip-dot" style="background:var(--discover)"></span>Team Collaboration</span>
+          <span class="chip"><span class="chip-dot" style="background:var(--discover)"></span>Clicks &amp; Impressions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector -->
+  <div class="conn"><div class="conn-line"></div><div class="conn-arrow"></div></div>
+
+</div><!-- /canvas -->
+
 </body>
 </html>
