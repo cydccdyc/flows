@@ -627,6 +627,77 @@
     SDR is assigned, automated email is sent, and the team is notified in Slack. The lead is now live in HubSpot and ready for follow-up.
   </div>
 
+
+  <!-- ══ PHASE 2 PREVIEW ══ -->
+  <div class="phase2-divider">
+    <div class="phase2-divider-line"></div>
+    <div class="phase2-divider-badge">⚗ PHASE 2 · COMING SOON</div>
+    <div class="phase2-divider-line"></div>
+  </div>
+
+  <div class="phase2-wrapper">
+
+    <div class="step-lbl" style="margin-top:0"><span class="step-num" style="background:#7C3AED">PHASE 2</span>Weekly Activity Signal Sync</div>
+
+    <div class="node scoring">
+      <div class="node-stripe"></div>
+      <div class="node-hd">
+        <div class="node-hd-left">
+          <span class="sys-badge">DATA SYNC</span>
+          <span class="node-title">Discover → HubSpot — Weekly Cadence</span>
+        </div>
+        <span class="status-tag warn">⚗ In Design</span>
+      </div>
+      <div class="node-body">
+        <div class="fg">
+          <div class="fg-lbl">Activity signals synced (Weekly count + Total count per prospect)</div>
+          <div class="signals-grid">
+            <div class="signal-chip"><div class="signal-chip-lbl">Add to Pipeline</div>Weekly + Total</div>
+            <div class="signal-chip"><div class="signal-chip-lbl">Solicitation Likes</div>Weekly + Total</div>
+            <div class="signal-chip"><div class="signal-chip-lbl">Solicitation Dislikes</div>Weekly + Total</div>
+            <div class="signal-chip"><div class="signal-chip-lbl">Clicks</div>Weekly + Total</div>
+            <div class="signal-chip"><div class="signal-chip-lbl">Search Impressions</div>Weekly + Total</div>
+            <div class="signal-chip"><div class="signal-chip-lbl">Invitees Added</div>Weekly + Total</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-arrow"></div></div>
+
+    <div class="step-lbl"><span class="step-num" style="background:#7C3AED">PHASE 2</span>Lead Intent Score → Routing Decision</div>
+
+    <div class="node scoring">
+      <div class="node-stripe"></div>
+      <div class="node-hd">
+        <div class="node-hd-left">
+          <span class="sys-badge">SCORING</span>
+          <span class="node-title">Intent Score = Weighted Sum of Activity Signals</span>
+        </div>
+        <span class="status-tag warn">⚗ Weights TBD</span>
+      </div>
+      <div class="node-body">
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px">
+          Each signal is assigned a weight. The intent score is calculated weekly for every Discover prospect and written back to HubSpot. A threshold determines whether a lead is ready for sales outreach or should continue in a nurture sequence.
+        </p>
+        <div class="p2-routing">
+          <div class="p2-branch high">
+            <div class="p2-branch-lbl">↑ Score ≥ Threshold</div>
+            <div class="p2-branch-body">Route to SDR or AE — high-intent prospect is ready for outreach.</div>
+          </div>
+          <div class="p2-branch low">
+            <div class="p2-branch-lbl">↓ Score &lt; Threshold</div>
+            <div class="p2-branch-body">Enter nurture email sequence. Re-evaluated weekly.</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:9px 12px;border-radius:6px;background:#F3F4F6;border:1px solid var(--border);font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace">
+          Full rollout presentation will be shared with the team when Phase 2 is ready. More signals likely to be added.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phase2-wrapper -->
+
 </div><!-- /canvas -->
 
 </body>
