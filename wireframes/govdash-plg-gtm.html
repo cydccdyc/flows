@@ -700,5 +700,247 @@
 
 </div><!-- /canvas -->
 
+<div class="toast" id="toast">✓ Saved</div>
+
+<script>
+  function setStatus(state, label) {
+    document.getElementById('liveDot').className = 'live-dot ' + state;
+    document.getElementById('liveLabel').textContent = label;
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || '✓ Saved';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  let REF = null, _ceData = {};
+
+  if (DEMO_MODE) {
+    setStatus('demo', 'Local only — add Firebase to sync');
+    function saveAll() {
+      const data = {};
+      document.querySelectorAll('[data-key]').forEach(el => { data[el.dataset.key] = el.innerHTML; });
+      localStorage.setItem('plg-flow-v1', JSON.stringify(data));
+      showToast('✓ Saved locally');
+    }
+    (function loadAll() {
+      try {
+        const raw = localStorage.getItem('plg-flow-v1');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        _ceData = data;
+        document.querySelectorAll('[data-key]').forEach(el => { if (data[el.dataset.key]) el.innerHTML = data[el.dataset.key]; });
+      } catch(e) {}
+    })();
+    let t;
+    document.addEventListener('input', e => { if (e.target.dataset.key) { clearTimeout(t); t = setTimeout(saveAll, 800); } });
+
+  } else {
+    firebase.initializeApp(firebaseConfig);
+    const db  = firebase.database();
+    REF = db.ref('gtm-flow/fields');
+
+    firebase.database().ref('.info/connected').on('value', snap => {
+      setStatus(snap.val() ? 'online' : 'offline', snap.val() ? 'Live — syncing' : 'Reconnecting…');
+    });
+    REF.once('value', snap => {
+      const data = snap.val() || {};
+      _ceData = data;
+      document.querySelectorAll('[data-key]').forEach(el => { if (data[el.dataset.key]) el.innerHTML = data[el.dataset.key]; });
+    });
+    REF.on('child_changed', snap => {
+      document.querySelectorAll(`[data-key="${snap.key}"]`).forEach(el => {
+        if (document.activeElement !== el) el.innerHTML = snap.val() || '';
+      });
+    });
+    const pending = {};
+    document.addEventListener('input', e => {
+      if (!e.target.dataset.key) return;
+      const key = e.target.dataset.key;
+      clearTimeout(pending[key]);
+      pending[key] = setTimeout(() => { REF.child(key).set(e.target.innerHTML); showToast('✓ Synced'); }, 600);
+    });
+    function saveAll() {
+      const updates = {};
+      document.querySelectorAll('[data-key]').forEach(el => { updates[el.dataset.key] = el.innerHTML; });
+      REF.update(updates).then(() => showToast('✓ All fields saved'));
+    }
+  }
+
+  // ─── UNIVERSAL CLICK-TO-EDIT ───
+  const _CE_SKIP_TAGS = new Set(['SCRIPT','STYLE','SVG','PATH','HR','BR','IMG','INPUT','SELECT','TEXTAREA','BUTTON','A','HEADER','FOOTER','NAV']);
+  const _CE_SKIP_CLS  = new Set([
+    'step-num','sys-badge','chip-dot','chip-type','email-num','icp-op','icp-conn',
+    'col-leg-line','col-leg','fork-leg','merge-leg','b-fork-leg','frb-leg',
+    'conn-arrow','weight-unit','live-dot','live-status','rb-stripe',
+    'node-stripe','sub-stripe','loop-icon','step-lbl',
+    'weight-input-wrap','fit-routing-bridge'
+  ]);
+
+  function _ceStableKey(el) {
+    let path = '', cur = el;
+    while (cur && cur !== document.body) {
+      const idx = cur.parentElement ? Array.from(cur.parentElement.children).indexOf(cur) : 0;
+      path = cur.tagName + '[' + idx + ']>' + path;
+      cur = cur.parentElement;
+    }
+    let h = 5381;
+    for (let i = 0; i < path.length; i++) h = (Math.imul(h, 31) + path.charCodeAt(i)) >>> 0;
+    return 'ck' + h.toString(36);
+  }
+
+  function _canEdit(el) {
+    if (!el || _CE_SKIP_TAGS.has(el.tagName)) return false;
+    if (!el.textContent.trim()) return false;
+    for (const cls of el.classList) { if (_CE_SKIP_CLS.has(cls)) return false; }
+    if (!el.closest('.canvas')) return false;
+    return true;
+  }
+
+  document.addEventListener('mouseover', e => {
+    if (_canEdit(e.target) && !e.target.isContentEditable) e.target.classList.add('click-hint');
+  });
+  document.addEventListener('mouseout', e => e.target.classList.remove('click-hint'));
+
+  document.addEventListener('click', e => {
+    const el = e.target;
+    if (!_canEdit(el) || el.isContentEditable) return;
+    if (!el.dataset.key) {
+      el.dataset.key = _ceStableKey(el);
+      if (_ceData[el.dataset.key]) el.innerHTML = _ceData[el.dataset.key];
+    }
+    el.setAttribute('contenteditable', 'true');
+    el.classList.add('click-editing');
+    el.classList.remove('click-hint');
+    el.focus();
+    try {
+      const r = document.caretRangeFromPoint(e.clientX, e.clientY);
+      if (r) { const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+    } catch(_) {}
+    el.addEventListener('blur', function onBlur() {
+      el.removeAttribute('contenteditable');
+      el.classList.remove('click-editing');
+      if (!DEMO_MODE && REF) {
+        REF.child(el.dataset.key).set(el.innerHTML);
+        _ceData[el.dataset.key] = el.innerHTML;
+        showToast('✓ Synced');
+      } else if (DEMO_MODE) { saveAll(); }
+    }, { once: true });
+  });
+
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveAll(); }
+  });
+
+  // ─── LOOP-BACK LINES (B2 → Step 5, C → Step 5) ───
+  function drawLoopBack() {
+    const old = document.getElementById('loop-svg');
+    if (old) old.remove();
+
+    const canvas = document.querySelector('.canvas');
+    const step5  = document.querySelector('.node.scoring');
+    const b2Card = document.querySelector('.sub-card.b2');
+    const cCard  = document.querySelector('.rb-card.cold');
+    if (!canvas || !step5 || !b2Card || !cCard) return;
+
+    canvas.style.position = 'relative';
+    const base = canvas.getBoundingClientRect();
+
+    function r(el) {
+      const rr = el.getBoundingClientRect();
+      return {
+        top:  rr.top    - base.top,
+        bot:  rr.bottom - base.top,
+        left: rr.left   - base.left,
+        right:rr.right  - base.left,
+        midY: (rr.top + rr.bottom) / 2 - base.top
+      };
+    }
+
+    const s5 = r(step5);
+    const b2 = r(b2Card);
+    const c  = r(cCard);
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.id = 'loop-svg';
+    svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:5;overflow:visible;';
+    svg.setAttribute('width', canvas.offsetWidth);
+    svg.setAttribute('height', canvas.offsetHeight);
+
+    // Arrowhead markers
+    const defs = document.createElementNS(ns, 'defs');
+    [['lp-b2','#F59E0B'],['lp-c','#7C3AED']].forEach(([id, color]) => {
+      const m = document.createElementNS(ns, 'marker');
+      m.setAttribute('id', id); m.setAttribute('markerWidth','7'); m.setAttribute('markerHeight','7');
+      m.setAttribute('refX','6'); m.setAttribute('refY','3.5'); m.setAttribute('orient','auto');
+      const poly = document.createElementNS(ns, 'polygon');
+      poly.setAttribute('points','0 0, 6 3.5, 0 7'); poly.setAttribute('fill', color);
+      m.appendChild(poly); defs.appendChild(m);
+    });
+    svg.appendChild(defs);
+
+    // Rails run outside the right edge of the routing section — spread apart for clarity
+    const maxRight = Math.max(c.right, b2.right);
+    const railB2 = maxRight + 24;
+    const railC  = maxRight + 56;
+    const R = 12; // corner radius
+
+    function addLoop(x0, y0, rail, entryY, color, markerId, label) {
+      const d = [
+        `M ${x0},${y0}`,
+        `H ${rail - R}`,
+        `Q ${rail},${y0} ${rail},${y0 - R}`,
+        `V ${entryY + R}`,
+        `Q ${rail},${entryY} ${rail - R},${entryY}`,
+        `H ${s5.right}`
+      ].join(' ');
+
+      const path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', '1.5');
+      path.setAttribute('stroke-dasharray', '5,4');
+      path.setAttribute('marker-end', `url(#${markerId})`);
+      path.setAttribute('opacity', '0.8');
+      svg.appendChild(path);
+
+      // Label on the vertical section
+      const lx = rail + 5;
+      const ly = (y0 + entryY) / 2;
+      const lw = label.length * 7.2 + 12;
+
+      const bg = document.createElementNS(ns, 'rect');
+      bg.setAttribute('x', lx); bg.setAttribute('y', ly - 9);
+      bg.setAttribute('width', lw); bg.setAttribute('height', 18);
+      bg.setAttribute('rx', 4); bg.setAttribute('fill', '#fff');
+      bg.setAttribute('opacity', '0.92');
+      svg.appendChild(bg);
+
+      const txt = document.createElementNS(ns, 'text');
+      txt.setAttribute('x', lx + lw / 2); txt.setAttribute('y', ly + 5);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('fill', color);
+      txt.setAttribute('font-size', '10');
+      txt.setAttribute('font-family', "'JetBrains Mono', monospace");
+      txt.setAttribute('font-weight', '600');
+      txt.setAttribute('letter-spacing', '0.04em');
+      txt.textContent = label;
+      svg.appendChild(txt);
+    }
+
+    // Exit from card bottoms, enter near top of Step 5
+    addLoop(b2.right, b2.bot, railB2, s5.top + 28, '#F59E0B', 'lp-b2', 'WEEKLY');
+    addLoop(c.right,  c.bot,  railC,  s5.top + 54, '#7C3AED', 'lp-c',  'QUARTERLY');
+
+    canvas.appendChild(svg);
+  }
+
+  let _loopT;
+  window.addEventListener('load', drawLoopBack);
+  window.addEventListener('resize', () => { clearTimeout(_loopT); _loopT = setTimeout(drawLoopBack, 120); });
+</script>
 </body>
 </html>
