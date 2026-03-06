@@ -547,6 +547,39 @@
   <!-- Connector -->
   <div class="conn"><div class="conn-line"></div><div class="conn-arrow"></div></div>
 
+  <div class="step-lbl"><span class="step-num">STEP 4</span>SDR Round Robin Assignment</div>
+
+  <div class="node routing">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">ROUTING</span>
+        <span class="node-title">Next Available SDR Assigned</span>
+      </div>
+      <span class="status-tag ok">✓ Automated</span>
+    </div>
+    <div class="node-body">
+      <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px">
+        The lead is automatically assigned to the next available SDR via Round Robin rotation in HubSpot. Ownership is set on both the <strong style="color:var(--t1)">contact</strong> and <strong style="color:var(--t1)">company</strong> records simultaneously.
+      </p>
+      <div class="assign-grid">
+        <div class="assign-card found">
+          <div class="ac-lbl found">Contact already exists</div>
+          <div class="ac-body">Previous Discover user signs up again, or contact was in HubSpot from another source. <strong>Ownership updated</strong> to new assigned SDR.</div>
+        </div>
+        <div class="assign-card">
+          <div class="ac-lbl none">Net new contact</div>
+          <div class="ac-body">Brand new to HubSpot. <strong>Contact + company created</strong>, ownership assigned to next SDR in rotation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fork connector → two parallel actions -->
+  <div class="fork-stem"><div class="fork-stem-line"></div></div>
+  <div class="fork-bar"></div>
+  <div class="fork-legs"><div class="fork-leg"></div><div class="fork-leg"></div></div>
+
 </div><!-- /canvas -->
 
 </body>
