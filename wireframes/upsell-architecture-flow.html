@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upsell Architecture — HubSpot Design</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfrEphRv3oHlxp_sN--whtsH0nfR5Qjr4",
+      authDomain: "discover-product-led-growth.firebaseapp.com",
+      databaseURL: "https://discover-product-led-growth-default-rtdb.firebaseio.com",
+      projectId: "discover-product-led-growth",
+      storageBucket: "discover-product-led-growth.firebasestorage.app",
+      messagingSenderId: "932051000156",
+      appId: "1:932051000156:web:9c8e81e851bd726ae7bf99"
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #E8EDF5;
+      --card:      #FFFFFF;
+      --border:    #DDE3EE;
+      --shadow:    0 2px 8px rgba(15,30,60,0.08), 0 0 0 1px rgba(15,30,60,0.04);
+      --blue:      #1D4ED8;
+      --blue-bg:   #DBEAFE;
+      --green:     #047857;
+      --green-bg:  #D1FAE5;
+      --purple:    #6D28D9;
+      --purple-bg: #EDE9FE;
+      --amber:     #B45309;
+      --amber-bg:  #FEF9C3;
+      --amber-bdr: #F59E0B;
+      --red:       #B91C1C;
+      --red-bg:    #FEE2E2;
+      --t1: #0F172A;
+      --t2: #475569;
+      --t3: #94A3B8;
+      --wire: #7A8FAD;
+    }
+
+    html { background: var(--bg); color: var(--t1); font-family: 'Lexend Deca', sans-serif; font-size: 13px; line-height: 1.5; }
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, #B0BED6 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.93); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 36px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .hdr-left { display: flex; align-items: center; gap: 10px; }
+    .hdr-logo { font-weight: 700; font-size: 14px; color: var(--t1); letter-spacing: -0.02em; }
+    .hdr-sep { color: var(--t3); }
+    .hdr-title { font-size: 13px; color: var(--t2); }
+    .hdr-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      padding: 2px 7px; border-radius: 3px;
+      background: var(--amber-bg); color: var(--amber);
+      border: 1px solid #FCD34D; letter-spacing: 0.08em;
+    }
+    .legend { display: flex; align-items: center; gap: 16px; }
+    .leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--t3); font-family: 'JetBrains Mono', monospace; }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .leg-line { width: 16px; height: 2px; border-bottom: 2px dashed var(--amber-bdr); }
+
+    /* ── CANVAS ── */
+    .canvas { max-width: 1100px; margin: 0 auto; padding: 48px 36px 120px; display: flex; flex-direction: column; gap: 44px; }
+
+    /* ── SECTION LABELS ── */
+    .step-lbl {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 15px; font-weight: 600; color: var(--t1); letter-spacing: -0.01em;
+    }
+    .step-lbl .num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--t1); color: #fff;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card); border-radius: 10px;
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      padding: 24px 28px;
+    }
+    .card-title { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 4px; }
+    .card-sub { font-size: 11px; color: var(--t3); margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; }
+
+    /* ── UNDER DISCUSSION TREATMENT ── */
+    .tbd-section {
+      border: 2px dashed var(--amber-bdr) !important;
+      background: repeating-linear-gradient(
+        -45deg,
+        #FFFBEB, #FFFBEB 5px,
+        #FEF3C7 5px, #FEF3C7 10px
+      ) !important;
+    }
+    .tbd-card {
+      border: 2px dashed var(--amber-bdr);
+      background: #FFFDF0;
+      box-shadow: none;
+    }
+    .tbd-row {
+      background: #FFFDF0 !important;
+      border-left: 3px solid var(--amber-bdr) !important;
+    }
+    .tbd-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; font-weight: 700;
+      padding: 2px 6px; border-radius: 3px;
+      background: var(--amber-bdr); color: #fff;
+      letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .decision-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--amber-bdr); color: #fff;
+      font-size: 8px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      vertical-align: middle; flex-shrink: 0;
+    }
+
+    /* ── MERMAID ── */
+    .mermaid { display: flex; justify-content: center; }
+
+    /* ── PROPERTY TABLE ── */
+    .prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .prop-group { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .prop-group-hdr {
+      background: var(--t1); color: #fff;
+      padding: 9px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .prop-group-hdr .pipeline-id {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      opacity: 0.5; letter-spacing: 0.05em;
+    }
+    .prop-row {
+      display: grid; grid-template-columns: 170px 80px 1fr;
+      padding: 9px 14px; border-bottom: 1px solid var(--border);
+      font-size: 12px; gap: 10px; align-items: start;
+      transition: background 0.1s;
+    }
+    .prop-row:last-child { border-bottom: none; }
+    .prop-row:not(.tbd-row):hover { background: #F8FAFC; }
+    .prop-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); font-weight: 500; }
+    .prop-desc { color: var(--t2); font-size: 11px; line-height: 1.5; }
+    .prop-desc strong { color: var(--t1); }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; font-weight: 600;
+      padding: 2px 6px; border-radius: 3px;
+      display: inline-block; white-space: nowrap; letter-spacing: 0.04em;
+    }
+    .tag.new      { background: var(--green-bg); color: var(--green); }
+    .tag.extend   { background: var(--amber-bg); color: var(--amber); }
+    .tag.existing { background: var(--purple-bg); color: var(--purple); }
+
+    .stages-footer {
+      padding: 10px 14px; background: #F8FAFC;
+      font-size: 11px; color: var(--t2); border-top: 1px solid var(--border);
+    }
+    .stages-footer strong { color: var(--t1); display: block; margin-bottom: 4px; }
+    .stages-row {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .stage-chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      padding: 2px 7px; border-radius: 3px;
+      background: var(--blue-bg); color: var(--blue);
+      border: 1px solid #BFDBFE;
+    }
+    .stage-chip.won  { background: var(--green-bg); color: var(--green); border-color: #6EE7B7; }
+    .stage-chip.lost { background: var(--red-bg); color: var(--red); border-color: #FECACA; }
+    .stage-chip.tbd  { background: var(--amber-bg); color: var(--amber); border: 1px dashed var(--amber-bdr); }
+    .stage-arrow { color: var(--t3); font-size: 10px; }
+
+    /* ── COMP CARDS ── */
+    .comp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .comp-card { border-radius: 8px; padding: 14px; border: 1px solid var(--border); }
+    .comp-card .value {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+      padding: 3px 8px; border-radius: 3px;
+      display: inline-block; margin-bottom: 8px;
+    }
+    .comp-card h4 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+    .comp-card p { font-size: 11px; color: var(--t2); line-height: 1.45; }
+    .comp-card.c-none { background: #F8FAFC; }
+    .comp-card.c-none .value { background: #E2E8F0; color: #475569; }
+    .comp-card.c-new  { background: #F0FDF4; border-color: #86EFAC; }
+    .comp-card.c-new .value  { background: var(--green-bg); color: var(--green); }
+    .comp-card.c-ret  { background: #EFF6FF; border-color: #93C5FD; }
+    .comp-card.c-ret .value  { background: var(--blue-bg); color: var(--blue); }
+    .comp-card.c-drop { background: #FFF1F2; border-color: #FECDD3; }
+    .comp-card.c-drop .value { background: var(--red-bg); color: var(--red); }
+    .comp-tbd-banner {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 6px;
+      background: var(--amber-bg); border: 1px dashed var(--amber-bdr);
+      font-size: 11px; color: var(--amber); font-weight: 600;
+    }
+
+    /* ── AUTOMATION STEPS ── */
+    .auto-steps { display: flex; flex-direction: column; gap: 10px; }
+    .auto-step { display: flex; gap: 14px; align-items: flex-start; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--border); background: #FAFBFD; }
+    .auto-step.tbd-row { background: #FFFDF0 !important; border-left: 3px solid var(--amber-bdr) !important; border-color: var(--amber-bdr); }
+    .step-circle {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--blue); color: #fff;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-body h4 { font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--t1); }
+    .step-body p { font-size: 11px; color: var(--t2); line-height: 1.5; margin-bottom: 5px; }
+    .trigger-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500;
+      background: var(--blue-bg); color: var(--blue);
+      padding: 2px 8px; border-radius: 3px; display: inline-block;
+    }
+
+    /* ── DECISIONS PANEL ── */
+    .decisions { display: flex; flex-direction: column; gap: 10px; }
+    .decision-item {
+      display: flex; gap: 14px; padding: 14px 16px;
+      border-radius: 8px; border: 1px solid;
+      align-items: flex-start;
+    }
+    .decision-item.urgent { border-color: var(--amber-bdr); background: #FFFBEB; }
+    .decision-item.discuss { border-color: #93C5FD; background: #EFF6FF; }
+    .d-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--amber-bdr); color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .decision-item.discuss .d-num { background: var(--blue); }
+    .d-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--t3); margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
+    .d-text { font-size: 12px; line-height: 1.55; color: var(--t1); }
+    .d-rec { font-size: 11px; color: var(--t3); margin-top: 4px; }
+    .d-rec strong { color: var(--blue); }
+
+    footer { text-align: center; padding: 24px; font-size: 10px; color: var(--t3); font-family: 'JetBrains Mono', monospace; }
+
+    /* ── HEADER CONTROLS ── */
+    .hdr-right { display: flex; align-items: center; gap: 8px; }
+    .live-pill { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 10px; border-radius: 20px; background: #F8FAFC; border: 1px solid var(--border); color: var(--t3); }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--t3); transition: background 0.3s; }
+    .live-dot.online  { background: #10B981; box-shadow: 0 0 5px rgba(16,185,129,0.4); }
+    .live-dot.offline { background: #EF4444; }
+    .save-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 5px 12px; border-radius: 5px; background: var(--t1); color: #fff; border: none; cursor: pointer; letter-spacing: 0.04em; transition: background 0.15s; }
+    .save-btn:hover { background: #1e293b; }
+
+    /* ── EDITABLE FIELDS ── */
+    [contenteditable] { outline: none; cursor: text; border-radius: 3px; transition: background 0.15s; }
+    [contenteditable]:hover { background: rgba(99,132,192,0.12); }
+    [contenteditable]:focus { background: rgba(99,132,192,0.18); }
+    [contenteditable]:empty::before { content: attr(data-ph); opacity: 0.35; font-style: italic; }
+    .d-rec[contenteditable]:hover { background: rgba(0,0,0,0.04); }
+    .d-rec[contenteditable]:focus { background: rgba(0,0,0,0.07); }
+
+    /* ── TOAST ── */
+    #toast { position: fixed; bottom: 28px; right: 28px; background: var(--t1); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 16px; border-radius: 6px; opacity: 0; transform: translateY(6px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; }
+
+    /* ── FLOW BAND ── */
+    .flow-band {
+      width: 100%;
+      background: #1E2D40;
+      border-top: 1px solid #2A3D54;
+      border-bottom: 1px solid #2A3D54;
+      padding: 36px 0 40px;
+    }
+    .flow-band-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 36px;
+    }
+    .flow-band .step-lbl { color: #E2E8F0; margin-bottom: 20px; }
+    .flow-band .step-lbl .num { background: #3A506A; }
+
+    /* Vertical linear flow track */
+    .lf-track {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+    .lf-step {
+      width: 100%;
+      background: #28394F;
+      border: 1px solid #3A506A;
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 100px 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .lf-step.lf-tbd {
+      border: 2px dashed #F59E0B;
+      background: rgba(251,191,36,0.07);
+    }
+    .lf-step.lf-auto {
+      border-color: #1D6B45;
+      background: rgba(16,185,129,0.08);
+    }
+    .lf-step-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 2px;
+    }
+    .lf-step-main { display: flex; flex-direction: column; gap: 5px; }
+    .lf-step-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-left: 1px solid #3A506A;
+      padding-left: 20px;
+    }
+    .lf-step.lf-auto .lf-step-aside { border-left-color: #1D6B45; }
+    .lf-step.lf-tbd  .lf-step-aside { border-left-color: #92400E; }
+    .lf-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      width: 100%;
+    }
+    .lf-connector svg { display: block; }
+    .lf-actor {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .lf-actor.rm   { color: #60A5FA; }
+    .lf-actor.auto { color: #34D399; }
+    .lf-actor.sys  { color: #94A3B8; }
+    .lf-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #E2E8F0;
+      line-height: 1.3;
+    }
+    .lf-detail {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #7A94AE;
+      line-height: 1.7;
+    }
+    .lf-detail .hi { color: #A8C0D6; }
+    .lf-aside-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 2px;
+    }
+    .lf-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: #F59E0B;
+      color: #fff;
+      align-self: flex-start;
+    }
+
+    /* Legend row */
+    .lf-legend {
+      display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .lf-leg {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; color: #64748B;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .lf-leg .dot { width: 8px; height: 8px; border-radius: 2px; }
+    .lf-leg .dline { width: 18px; border-bottom: 2px dashed #F59E0B; }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-logo">GovDash</span>
+    <span class="hdr-sep">/</span>
+    <span class="hdr-title">Upsell Architecture — HubSpot Design</span>
+    <span class="hdr-tag">DRAFT v1 · Mar 2026</span>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#1D4ED8"></div> confirmed</div>
+    <div class="leg"><div class="leg-dot" style="background:#047857"></div> new property</div>
+    <div class="leg"><div class="leg-dot" style="background:#6D28D9"></div> existing property</div>
+    <div class="leg"><div class="leg-line"></div> needs decision</div>
+  </div>
+  <div class="hdr-right">
+    <div class="live-pill"><div class="live-dot" id="live-dot"></div><span id="live-label">connecting…</span></div>
+    <button class="save-btn" onclick="saveAll()">Save ⌘S</button>
+  </div>
+</header>
+<div id="toast"></div>
+
+<!-- ── 1. PROCESS FLOW BAND ── -->
+<div class="flow-band">
+  <div class="flow-band-inner">
+    <div class="step-lbl">
+      <span class="num">1</span> Process Flow
+    </div>
+
+    <div class="lf-track">
+
+      <!-- Step 1: Renewal Deal -->
+      <div class="lf-step">
+        <div class="lf-step-left">
+          <div class="lf-actor sys">System</div>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">Renewal Deal</div>
+          <div class="lf-detail">
+            <span class="hi">Renewals Pipeline</span> · 636526733
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label">Trigger</div>
+          <div class="lf-detail">90 days before contract end date</div>
+        </div>
+      </div>
+
+      <div class="lf-connector">
+        <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#3A506A" stroke-width="1.5"/><polyline points="4,12 8,18 12,12" fill="none" stroke="#3A506A" stroke-width="1.5"/></svg>
+      </div>
+
+      <!-- Step 2: RM sets trigger (TBD ①) -->
+      <div class="lf-step lf-tbd">
+        <div class="lf-step-left">
+          <div class="lf-actor rm">RM Action</div>
+          <span class="lf-badge">① DECIDE</span>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">Set Trigger Property</div>
+          <div class="lf-detail">
+            <span class="hi">deal_expansion_type</span><br>
+            — Upsell-New<br>
+            — Upsell-Retained<br>
+            — None
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label" style="color:#F59E0B;">Open question</div>
+          <div class="lf-detail" contenteditable="true" data-key="step2-note" data-ph="Add a note or decision…">Extend existing property, or create a new <span class="hi">deal_motion</span> property?</div>
+          <div class="lf-detail" style="margin-top:8px;color:#374151;font-style:italic;">If None → standard renewal, no further steps.</div>
+        </div>
+      </div>
+
+      <div class="lf-connector">
+        <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#3A506A" stroke-width="1.5"/><polyline points="4,12 8,18 12,12" fill="none" stroke="#3A506A" stroke-width="1.5"/></svg>
+      </div>
+
+      <!-- Step 3: Auto — Upsell Deal created -->
+      <div class="lf-step lf-auto">
+        <div class="lf-step-left">
+          <div class="lf-actor auto">Automation</div>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">Upsell Deal Created</div>
+          <div class="lf-detail">
+            <span class="hi">Upsell Pipeline</span> · 875026198<br>
+            Auto-associated back to Renewal Deal
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label" style="color:#F59E0B;">② Confirm default stage</div>
+          <div class="lf-detail" contenteditable="true" data-key="step3-note" data-ph="Confirm or update…" style="color:#F59E0B;">50% Demo Held — correct?</div>
+        </div>
+      </div>
+
+      <div class="lf-connector">
+        <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#3A506A" stroke-width="1.5"/><polyline points="4,12 8,18 12,12" fill="none" stroke="#3A506A" stroke-width="1.5"/></svg>
+      </div>
+
+      <!-- Step 4: RM fills Upsell Deal (TBD ③) -->
+      <div class="lf-step lf-tbd">
+        <div class="lf-step-left">
+          <div class="lf-actor rm">RM Action</div>
+          <span class="lf-badge">③ DECIDE</span>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">Fill Upsell Deal</div>
+          <div class="lf-detail">
+            <span class="hi">amount</span> — first year upsell ARR<br>
+            <span class="hi">contract_products</span> — modules being added
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label" style="color:#F59E0B;">Open question</div>
+          <div class="lf-detail" contenteditable="true" data-key="step4-note" data-ph="Add a note or decision…">Should <span class="hi">contract_products</span> live on the Upsell Deal only, or also on the Renewal Deal?</div>
+        </div>
+      </div>
+
+      <div class="lf-connector">
+        <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#3A506A" stroke-width="1.5"/><polyline points="4,12 8,18 12,12" fill="none" stroke="#3A506A" stroke-width="1.5"/></svg>
+      </div>
+
+      <!-- Step 5: Auto — ARR Rollup -->
+      <div class="lf-step lf-auto">
+        <div class="lf-step-left">
+          <div class="lf-actor auto">Automation</div>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">ARR Rollup to Renewal Deal</div>
+          <div class="lf-detail">
+            <span class="hi">upsell_arr</span> = sum of all associated Upsell Deal amounts<br>
+            <span class="hi">total_next_renewal_arr</span> = amount + upsell_arr
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label">Writes to</div>
+          <div class="lf-detail">Renewal Deal record</div>
+        </div>
+      </div>
+
+      <div class="lf-connector">
+        <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#3A506A" stroke-width="1.5"/><polyline points="4,12 8,18 12,12" fill="none" stroke="#3A506A" stroke-width="1.5"/></svg>
+      </div>
+
+      <!-- Step 6: Upsell Deal stages -->
+      <div class="lf-step">
+        <div class="lf-step-left">
+          <div class="lf-actor sys">Upsell Pipeline</div>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">Upsell Deal Progresses</div>
+          <div class="lf-detail">
+            50% Demo Held → 65% Proposal Out → 75% Contract Sent → 85% Verbal Commit → 95% Legal Review
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label">Outcomes</div>
+          <div class="lf-detail">
+            <span style="color:#34D399;">Closed Won</span> — upsell ARR confirmed<br>
+            <span style="color:#F87171;">Closed Lost</span> — renewal-only contract
+          </div>
+        </div>
+      </div>
+
+      <div class="lf-connector">
+        <svg width="16" height="22" viewBox="0 0 16 22"><line x1="8" y1="0" x2="8" y2="16" stroke="#3A506A" stroke-width="1.5"/><polyline points="4,12 8,18 12,12" fill="none" stroke="#3A506A" stroke-width="1.5"/></svg>
+      </div>
+
+      <!-- Step 7: Next Renewal (TBD ④) -->
+      <div class="lf-step lf-tbd">
+        <div class="lf-step-left">
+          <div class="lf-actor rm">RM Action</div>
+          <span class="lf-badge">④ DECIDE</span>
+        </div>
+        <div class="lf-step-main">
+          <div class="lf-name">Next Renewal Created</div>
+          <div class="lf-detail">
+            Based on <span class="hi">total_next_renewal_arr</span><br>
+            RM sets <span class="hi">deal_expansion_type</span> → Retained or Dropped
+          </div>
+        </div>
+        <div class="lf-step-aside">
+          <div class="lf-aside-label" style="color:#F59E0B;">Open question</div>
+          <div class="lf-detail" contenteditable="true" data-key="step7-note" data-ph="Confirm trigger type…" style="color:#F59E0B;">Auto (date trigger) or manual by RM?</div>
+          <div class="lf-detail" style="margin-top:6px;">
+            <span style="color:#60A5FA;">Retained → new Upsell Deal spins up</span><br>
+            <span style="color:#F87171;">Dropped → comp flag triggered</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /lf-track -->
+
+    <div class="lf-legend">
+      <div class="lf-leg"><div class="dline"></div> dashed amber = needs decision</div>
+      <div class="lf-leg"><div class="dot" style="background:rgba(16,185,129,0.1);border:1px solid #166634;"></div> green = automation step</div>
+      <div class="lf-leg"><div class="dot" style="background:#1E293B;border:1px solid #334155;"></div> dark = confirmed step</div>
+    </div>
+  </div>
+</div>
+
+<main class="canvas">
+
+  <!-- ── 2. PROPERTY ARCHITECTURE ── -->
+  <div>
+    <div class="step-lbl" style="margin-bottom:16px">
+      <span class="num">2</span> Property Architecture
+      <span style="font-size:11px;font-weight:400;color:var(--t3);font-family:'JetBrains Mono',monospace;">3 new · 1 extended · 2 existing reused</span>
+    </div>
+    <div class="prop-grid">
+
+      <!-- Renewal Deal -->
+      <div class="prop-group">
+        <div class="prop-group-hdr">
+          Renewal Deal
+          <span class="pipeline-id">PIPELINE 636526733</span>
+        </div>
+
+        <!-- TBD: property name decision -->
+        <div class="prop-row tbd-row">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="prop-name">deal_expansion_type</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <span class="tag extend">Extend</span>
+            <span class="tbd-badge">① DECIDE</span>
+          </div>
+          <div class="prop-desc">
+            <strong>Trigger field.</strong> Currently: Upsell / Downsell / None.<br>
+            Proposed new values: <em>Upsell-New, Upsell-Retained, Upsell-Dropped</em>.<br>
+            <span style="color:var(--amber);font-size:10px;">→ Or create a new <code>deal_motion</code> property instead?</span>
+          </div>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-name">amount</div>
+          <span class="tag existing">Existing</span>
+          <div class="prop-desc">
+            <strong>Base renewal ARR only.</strong> First year of the contract — renewal portion, no upsell included.
+          </div>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-name">upsell_arr</div>
+          <span class="tag new">New</span>
+          <div class="prop-desc">
+            <strong>Auto-calculated.</strong> Sum of all associated Upsell Deal amounts. Rolled up by workflow on Upsell Deal win.
+          </div>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-name">total_next_renewal_arr</div>
+          <span class="tag new">New</span>
+          <div class="prop-desc">
+            <strong>Auto-calculated.</strong> = amount + upsell_arr. Seeds the next renewal deal's starting amount.
+          </div>
+        </div>
+
+        <!-- TBD: where does contract_products live -->
+        <div class="prop-row tbd-row">
+          <div class="prop-name">contract_products</div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <span class="tag new">New</span>
+            <span class="tbd-badge">③ DECIDE</span>
+          </div>
+          <div class="prop-desc">
+            <strong>Multi-select.</strong> All active modules in this contract period.<br>
+            <span style="color:var(--amber);font-size:10px;">→ Renewal Deal only, or also on Upsell Deal?</span>
+          </div>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-name">previous_year_arr</div>
+          <span class="tag existing">Existing</span>
+          <div class="prop-desc">
+            <strong>Reference.</strong> Populated from prior renewal's <code>total_next_renewal_arr</code> so RM can see full prior-year value (base + upsell).
+          </div>
+        </div>
+      </div>
+
+      <!-- Upsell Deal -->
+      <div class="prop-group">
+        <div class="prop-group-hdr">
+          Upsell Deal
+          <span class="pipeline-id">PIPELINE 875026198</span>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-name">amount</div>
+          <span class="tag existing">Existing</span>
+          <div class="prop-desc">
+            <strong>Upsell ARR only.</strong> First year ARR of the upsell module(s). Set by RM. Rolls up to Renewal Deal's <code>upsell_arr</code>.
+          </div>
+        </div>
+
+        <!-- TBD: contract_products on upsell deal -->
+        <div class="prop-row tbd-row">
+          <div class="prop-name">contract_products</div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <span class="tag new">New</span>
+            <span class="tbd-badge">③ DECIDE</span>
+          </div>
+          <div class="prop-desc">
+            <strong>Multi-select.</strong> Modules being added via this upsell.<br>
+            <span style="color:var(--amber);font-size:10px;">→ Only needed here if tracking per-module upsell granularity.</span>
+          </div>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-name">deal_expansion_type</div>
+          <span class="tag existing">Existing</span>
+          <div class="prop-desc">
+            Auto-set to <em>Upsell</em> on deal creation for reporting.
+          </div>
+        </div>
+
+        <div class="stages-footer">
+          <strong>Upsell Pipeline Stages</strong>
+          <div class="stages-row">
+            <span class="stage-chip tbd">② 50% Demo Held</span>
+            <span class="stage-arrow">→</span>
+            <span class="stage-chip">65% Proposal Out</span>
+            <span class="stage-arrow">→</span>
+            <span class="stage-chip">75% Contract Sent</span>
+            <span class="stage-arrow">→</span>
+            <span class="stage-chip">85% Verbal Commit</span>
+            <span class="stage-arrow">→</span>
+            <span class="stage-chip">95% Legal Review</span>
+            <span class="stage-arrow">→</span>
+            <span class="stage-chip won">Closed Won</span>
+            <span class="stage-chip lost">Closed Lost</span>
+            <span class="stage-chip lost">Churned</span>
+          </div>
+          <div style="margin-top:6px;font-size:10px;color:var(--amber);">② Dashed = confirm this is the auto-creation default stage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. COMPENSATION LOGIC ── -->
+  <div>
+    <div class="step-lbl" style="margin-bottom:16px">
+      <span class="num">3</span> Compensation Tracking
+      <span class="tbd-badge" style="font-size:9px;">④ NEEDS DECISION</span>
+    </div>
+    <div class="card tbd-card">
+      <div class="card-title">How <code>deal_expansion_type</code> drives comp — proposed values</div>
+      <div class="card-sub">Set by RM on each new Renewal Deal · comp rules TBD</div>
+      <div class="comp-grid">
+        <div class="comp-tbd-banner">
+          ⚠ Compensation structure not confirmed. Values below are proposed. Need to align with Finance on bonus/chargeback rules before finalizing.
+        </div>
+        <div class="comp-card c-none">
+          <span class="value">None</span>
+          <h4>Standard Renewal</h4>
+          <p>No upsell history or never upsold. Standard renewal comp only.</p>
+        </div>
+        <div class="comp-card c-new">
+          <span class="value">Upsell-New</span>
+          <h4>New Upsell Added</h4>
+          <p>First time adding a module to this account. New upsell bonus triggered.</p>
+        </div>
+        <div class="comp-card c-ret">
+          <span class="value">Upsell-Retained</span>
+          <h4>Upsell Kept at Renewal</h4>
+          <p>Had upsell last year, renewing it. New Upsell Deal auto-spins up. Retention bonus.</p>
+        </div>
+        <div class="comp-card c-drop">
+          <span class="value">Upsell-Dropped</span>
+          <h4>Upsell Removed</h4>
+          <p>Had upsell, not renewing it. No Upsell Deal created. Chargeback / reduced comp.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. AUTOMATION WORKFLOWS ── -->
+  <div>
+    <div class="step-lbl" style="margin-bottom:16px">
+      <span class="num">4</span> Automation Workflows to Build
+    </div>
+    <div class="card">
+      <div class="card-title">4 HubSpot workflow triggers required</div>
+      <div class="card-sub">All dependent on decisions ①–④ being resolved first</div>
+      <div class="auto-steps">
+        <div class="auto-step">
+          <div class="step-circle">1</div>
+          <div class="step-body">
+            <h4>Upsell Deal Creation</h4>
+            <p>When Renewal Deal's <code>deal_expansion_type</code> is set to <em>Upsell-New</em> or <em>Upsell-Retained</em> → create Upsell Deal in Upsell Pipeline, associate back to Renewal Deal.</p>
+            <span class="trigger-tag">Trigger: deal_expansion_type IN [Upsell-New, Upsell-Retained]</span>
+          </div>
+        </div>
+        <div class="auto-step">
+          <div class="step-circle">2</div>
+          <div class="step-body">
+            <h4>ARR Rollup</h4>
+            <p>When Upsell Deal <code>amount</code> is set or deal reaches Closed Won → sum all associated Upsell Deal amounts → write to Renewal Deal's <code>upsell_arr</code>.</p>
+            <span class="trigger-tag">Trigger: Upsell Deal.amount changes OR dealstage = Closed Won</span>
+          </div>
+        </div>
+        <div class="auto-step">
+          <div class="step-circle">3</div>
+          <div class="step-body">
+            <h4>Total Renewal Calculation</h4>
+            <p>When <code>amount</code> or <code>upsell_arr</code> changes on Renewal Deal → recalculate <code>total_next_renewal_arr</code> = amount + upsell_arr.</p>
+            <span class="trigger-tag">Trigger: Renewal Deal.amount or .upsell_arr changes</span>
+          </div>
+        </div>
+        <div class="auto-step tbd-row">
+          <div class="step-circle" style="background:var(--amber-bdr);">4</div>
+          <div class="step-body">
+            <h4>Next Renewal Creation &amp; previous_year_arr Sync <span class="tbd-badge">④ DECIDE</span></h4>
+            <p>Copy <code>total_next_renewal_arr</code> from closing renewal into <code>previous_year_arr</code> on the new renewal deal. Starting amount of next renewal = <code>total_next_renewal_arr</code>.</p>
+            <p style="color:var(--amber);margin-top:4px;">→ Is next renewal created <strong>automatically</strong> (date trigger, 90 days out) or <strong>manually</strong> by RM?</p>
+            <span class="trigger-tag" style="background:var(--amber-bg);color:var(--amber);">Trigger: TBD — date-based auto or manual RM action?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 5. OPEN DECISIONS ── -->
+  <div>
+    <div class="step-lbl" style="margin-bottom:16px">
+      <span class="num">5</span> Open Decisions
+      <span style="font-size:11px;font-weight:400;color:var(--t3);font-family:'JetBrains Mono',monospace;">4 items blocking build</span>
+    </div>
+    <div class="decisions">
+      <div class="decision-item urgent">
+        <div class="d-num">①</div>
+        <div>
+          <div class="d-label">Property Name — Blocker</div>
+          <div class="d-text">You called it <strong>"deal motion"</strong> — the existing HubSpot property is <strong><code>deal_expansion_type</code></strong> (Upsell / Downsell / None). Should we <strong>extend this property</strong> with new values, or create a new <code>deal_motion</code> property?</div>
+          <div class="d-rec" contenteditable="true" data-key="rec-1" data-ph="Add recommendation or decision…">Recommendation: <strong>extend existing</strong> — fewer properties, already used for reporting.</div>
+        </div>
+      </div>
+      <div class="decision-item urgent">
+        <div class="d-num">②</div>
+        <div>
+          <div class="d-label">Default Upsell Stage</div>
+          <div class="d-text">The Upsell Pipeline's first stage is <strong>50% Demo Held</strong>. Is this the correct stage for auto-created upsell deals, or should they land at a different stage (e.g. a new "Identified" stage)?</div>
+          <div class="d-rec" contenteditable="true" data-key="rec-2" data-ph="Add recommendation or decision…">Recommendation: <strong>confirm 50% Demo Held</strong> — or rename it to better reflect the upsell motion.</div>
+        </div>
+      </div>
+      <div class="decision-item discuss">
+        <div class="d-num" style="background:var(--blue);">③</div>
+        <div>
+          <div class="d-label">contract_products Location</div>
+          <div class="d-text">Should <code>contract_products</code> live on the <strong>Renewal Deal only</strong> (simpler), or on <strong>both Renewal Deal and Upsell Deal</strong> (per-module upsell tracking)?</div>
+          <div class="d-rec" contenteditable="true" data-key="rec-3" data-ph="Add recommendation or decision…">Recommendation: <strong>both</strong> — Upsell Deal captures what was added; Renewal Deal captures what's in the full contract.</div>
+        </div>
+      </div>
+      <div class="decision-item discuss">
+        <div class="d-num" style="background:var(--blue);">④</div>
+        <div>
+          <div class="d-label">Next Renewal Trigger</div>
+          <div class="d-text">Is the next Renewal Deal created <strong>automatically</strong> (e.g. 90 days before contract end date via workflow) or <strong>manually</strong> by the RM? Determines whether Workflow #4 is automated or just a data reference field.</div>
+          <div class="d-rec" contenteditable="true" data-key="rec-4" data-ph="Add recommendation or decision…">Already partially automated in Renewals Pipeline — confirm current behavior carries forward.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>GovDash RevOps · Upsell Architecture Draft v1 · March 2026 · upsell-architecture-flow.html</footer>
+
+<script>
+  let REF, autoSaveTimer;
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(6px)'; }, 2000);
+  }
+
+  function saveAll() {
+    if (!REF) return;
+    const updates = {};
+    document.querySelectorAll('[data-key]').forEach(el => { updates[el.dataset.key] = el.innerHTML; });
+    REF.update(updates).then(() => showToast('✓ Saved'));
+  }
+
+  // Firebase init
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  REF = db.ref('upsell-flow/fields');
+
+  // Connection status
+  firebase.database().ref('.info/connected').on('value', snap => {
+    const dot = document.getElementById('live-dot');
+    const lbl = document.getElementById('live-label');
+    if (snap.val()) {
+      dot.className = 'live-dot online'; lbl.textContent = 'live';
+    } else {
+      dot.className = 'live-dot offline'; lbl.textContent = 'offline';
+    }
+  });
+
+  // Load + live sync
+  REF.on('value', snap => {
+    const data = snap.val() || {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      if (data[el.dataset.key] !== undefined) el.innerHTML = data[el.dataset.key];
+    });
+  });
+
+  // Auto-save on input (800ms debounce)
+  document.addEventListener('input', e => {
+    if (e.target.dataset.key) {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(saveAll, 800);
+    }
+  });
+
+  // Cmd+S / Ctrl+S
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveAll(); }
+  });
+</script>
+
+</body>
+</html>
