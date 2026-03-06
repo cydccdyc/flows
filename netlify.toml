@@ -3,6 +3,6 @@
 
 [[redirects]]
   from = "/"
-  to = "/govdash-plg-flow.html"
+  to = "/index.html"
   status = 302
   force = true
