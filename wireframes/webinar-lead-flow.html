@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webinar Lead Flow — GovDash Field Marketing × SDR</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #E8EDF5;
+      --card:      #FFFFFF;
+      --border:    #DDE3EE;
+      --shadow:    0 2px 8px rgba(15,30,60,0.08), 0 0 0 1px rgba(15,30,60,0.04);
+      --fm:        #7C3AED;
+      --fm-muted:  #EDE9FE;
+      --sdr:       #047857;
+      --sdr-muted: #D1FAE5;
+      --hs:        #C2410C;
+      --hs-muted:  #FFEDD5;
+      --wire:      #7A8FAD;
+      --wire-light:#B8C8DC;
+      --t1: #0F172A;
+      --t2: #475569;
+      --t3: #94A3B8;
+    }
+
+    html { background: var(--bg); color: var(--t1); font-family: 'Lexend Deca', sans-serif; font-size: 13px; line-height: 1.5; }
+    body { min-height: 100vh; background-color: var(--bg); background-image: radial-gradient(circle, #B0BED6 1px, transparent 1px); background-size: 22px 22px; }
+
+    /* ─── HEADER ─── */
+    .hdr { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 36px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .hdr-left { display: flex; align-items: center; gap: 10px; }
+    .hdr-logo { font-weight: 700; font-size: 14px; color: var(--t1); letter-spacing: -0.02em; }
+    .hdr-sep { color: var(--t3); }
+    .hdr-title { font-size: 13px; color: var(--t2); font-weight: 400; }
+    .hdr-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 7px; border-radius: 3px; background: var(--fm-muted); color: var(--fm); border: 1px solid #C4B5FD; letter-spacing: 0.08em; }
+    .legend { display: flex; align-items: center; gap: 14px; }
+    .leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--t3); font-family: 'JetBrains Mono', monospace; }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .sla-note { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #92400E; background: #FFFBEB; border: 1px solid #FCD34D; padding: 3px 9px; border-radius: 4px; }
+
+    /* ─── CANVAS ─── */
+    .canvas { max-width: 1060px; margin: 0 auto; padding: 48px 36px 120px; }
+
+    /* ─── TIMELINE ANCHOR ─── */
+    .t-anchor { display: flex; align-items: center; gap: 14px; margin: 44px 0 28px; }
+    .t-anchor-line { flex: 1; height: 2px; background: linear-gradient(to right, transparent, var(--border), transparent); }
+    .t-anchor-badge { display: flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 100px; background: var(--t1); color: white; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; white-space: nowrap; }
+    .t-anchor.live .t-anchor-badge { background: linear-gradient(135deg, var(--fm) 0%, var(--sdr) 100%); }
+    .t-anchor.end .t-anchor-badge { background: #334155; }
+
+    /* ─── STEP LABEL ─── */
+    .step-lbl { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; font-size: 15px; font-weight: 600; color: var(--t1); letter-spacing: -0.01em; }
+    .step-lbl:first-child { margin-top: 0; }
+    .step-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 4px; background: var(--t1); color: white; flex-shrink: 0; }
+    .step-lbl::after { content: ''; flex: 1; height: 1.5px; background: linear-gradient(to right, rgba(15,23,42,0.15), transparent); border-radius: 2px; }
+
+    /* ─── TRACK LABEL ─── */
+    .track-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px; display: inline-block; }
+    .track-label.fm  { background: var(--fm-muted); color: var(--fm); border: 1px solid #C4B5FD; }
+    .track-label.sdr { background: var(--sdr-muted); color: var(--sdr); border: 1px solid #6EE7B7; }
+
+    /* ─── NODE CARD ─── */
+    .node { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; --accent: var(--t3); --muted: #F8FAFC; }
+    .node.fm  { --accent: var(--fm);  --muted: var(--fm-muted); }
+    .node.sdr { --accent: var(--sdr); --muted: var(--sdr-muted); }
+    .node.hs  { --accent: var(--hs);  --muted: var(--hs-muted); }
+    .node-stripe { height: 3px; background: var(--accent); }
+    .node-hd { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 11px; border-bottom: 1px solid var(--border); }
+    .node-hd-left { display: flex; align-items: center; gap: 9px; }
+    .sys-badge { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; padding: 2px 7px; border-radius: 3px; background: var(--muted); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); white-space: nowrap; }
+    .node-title { font-weight: 600; font-size: 13px; color: var(--t1); letter-spacing: -0.01em; }
+    .status-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
+    .status-tag.ok   { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+    .status-tag.warn { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+    .status-tag.sla  { background: var(--fm-muted); color: var(--fm); border: 1px solid #C4B5FD; }
+    .node-body { padding: 16px 18px 18px; }
+
+    /* ─── CHIPS ─── */
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--t2); background: var(--muted); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
+    .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    /* ─── MISC ─── */
+    .fg { margin-bottom: 14px; }
+    .fg:last-child { margin-bottom: 0; }
+    .fg-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t3); margin-bottom: 7px; }
+    .note-bar { display: flex; align-items: flex-start; gap: 7px; padding: 8px 10px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 8%, white); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); font-size: 11px; color: var(--t2); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .divider { border: none; border-top: 1.5px dashed var(--border); margin: 14px 0; }
+
+    /* ─── EMAIL ITEMS ─── */
+    .email-seq { display: flex; flex-direction: column; gap: 0; }
+    .email-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .email-item:first-child { padding-top: 0; }
+    .email-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .email-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: #374151; background: #E5E7EB; border-radius: 4px; padding: 2px 7px; flex-shrink: 0; margin-top: 1px; }
+    .email-detail { flex: 1; }
+    .email-title { font-size: 12px; font-weight: 600; color: var(--t1); margin-bottom: 4px; }
+    .timing-pill { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 7px; border-radius: 3px; display: inline-block; margin-bottom: 6px; }
+    .timing-pill.fm  { color: var(--fm); background: var(--fm-muted); border: 1px solid #C4B5FD; }
+    .timing-pill.sdr { color: var(--sdr); background: var(--sdr-muted); border: 1px solid #6EE7B7; }
+    .timing-pill.neutral { color: var(--t2); background: #F1F5F9; border: 1px solid var(--border); }
+
+    /* ─── SLA SLOTS ─── */
+    .sla-slot { margin-top: 7px; border: 1.5px dashed #FCD34D; border-radius: 5px; overflow: hidden; }
+    .sla-slot:focus-within { border-color: #F59E0B; }
+    .sla-hd { padding: 3px 8px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.06em; color: #92400E; }
+    .sla-body { padding: 5px 8px; background: #FFFDE7; font-size: 11px; color: var(--t2); min-height: 26px; }
+    [contenteditable] { outline: none; }
+    .sla-editable:empty::before { content: attr(data-ph); color: #D97706; font-style: italic; pointer-events: none; }
+    .sla-editable:focus { background: rgba(255,253,231,0.95); }
+
+    /* ─── DECISION DIAMOND ─── */
+    .decision-wrap { display: flex; justify-content: center; padding: 4px 0; }
+    .decision-card { background: var(--card); border-radius: 12px; border: 2px solid var(--border); padding: 14px 24px; text-align: center; box-shadow: var(--shadow); max-width: 320px; width: 100%; }
+    .decision-icon { font-size: 18px; margin-bottom: 4px; }
+    .decision-label { font-weight: 700; font-size: 13px; color: var(--t1); }
+    .decision-sub { font-size: 11px; color: var(--t3); margin-top: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; }
+
+    /* ─── BRANCH LABELS ─── */
+    .branch-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+    .branch-lbl.noshow   { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+    .branch-lbl.attended { background: var(--sdr-muted); color: #065F46; border: 1px solid #6EE7B7; }
+
+    /* ─── MINI SPLIT ─── */
+    .mini-split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .mini-branch { padding: 10px 12px; border-radius: 7px; }
+    .mini-branch.booked  { background: var(--sdr-muted); border: 1px solid #6EE7B7; }
+    .mini-branch.nobook  { background: #FEF2F2; border: 1px solid #FECACA; }
+    .mini-branch-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; margin-bottom: 5px; }
+    .mini-branch-lbl.booked { color: #065F46; }
+    .mini-branch-lbl.nobook { color: #991B1B; }
+    .mini-branch-txt { font-size: 11px; color: var(--t2); line-height: 1.5; }
+
+    /* ─── ESCALATION CARD ─── */
+    .esc-card { border-radius: 8px; border: 1px solid #6EE7B7; overflow: hidden; background: var(--card); margin-top: 10px; }
+    .esc-stripe { height: 3px; background: var(--sdr); }
+    .esc-hd { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 9px; border-bottom: 1px solid var(--border); background: var(--sdr-muted); }
+    .esc-title { font-weight: 600; font-size: 12px; color: var(--t1); }
+    .esc-body { padding: 12px 14px; }
+
+    /* ─── CONNECTORS ─── */
+    .conn { display: flex; flex-direction: column; align-items: center; padding: 2px 0; }
+    .conn-line { width: 2px; min-height: 30px; background: var(--wire-light); position: relative; overflow: hidden; }
+    .conn-line::after { content: ''; position: absolute; top: -60%; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, transparent, rgba(122,143,173,0.5), transparent); animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse { 0% { top: -60%; } 100% { top: 160%; } }
+    .conn-arrow { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--wire); }
+    .conn-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--t3); letter-spacing: 0.06em; margin: 2px 0; }
+    .fork-stem  { display: flex; justify-content: center; }
+    .fork-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
+    .fork-bar   { height: 2px; background: var(--wire-light); margin: 0 5%; }
+    .fork-legs  { display: flex; justify-content: space-between; padding: 0 5%; }
+    .fork-leg   { width: 2px; height: 24px; background: var(--wire-light); }
+    .merge-legs { display: flex; justify-content: space-between; padding: 0 5%; }
+    .merge-leg  { width: 2px; height: 24px; background: var(--wire-light); }
+    .merge-bar  { height: 2px; background: var(--wire-light); margin: 0 5%; }
+    .merge-stem { display: flex; justify-content: center; }
+    .merge-stem-line { width: 2px; height: 24px; background: var(--wire-light); }
+
+    /* ─── NOTIFICATION BLOCKS ─── */
+    .notif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .notif-block { padding: 10px 12px; border-radius: 8px; background: var(--hs-muted); border: 1px solid #FED7AA; }
+    .notif-sys { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; color: var(--hs); margin-bottom: 5px; }
+    .notif-txt { font-size: 12px; color: var(--t2); line-height: 1.5; }
+
+    @media (max-width: 820px) {
+      .two-col, .notif-grid, .mini-split { grid-template-columns: 1fr; }
+      .canvas { padding: 28px 18px 80px; }
+      .legend { display: none; }
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: var(--wire-light); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-logo">GovDash</span>
+    <span class="hdr-sep">·</span>
+    <span class="hdr-title">Webinar Lead Flow — Field Marketing × SDR</span>
+    <span class="hdr-tag">v0.1 DRAFT</span>
+  </div>
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:var(--fm)"></span>Field Marketing</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--sdr)"></span>SDR</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--hs)"></span>HubSpot / Slack</span>
+    <span class="leg"><span class="leg-dot" style="background:#F59E0B"></span>SLA — fill in</span>
+  </div>
+  <div class="sla-note">Yellow dashed = SLA to fill in</div>
+</header>
+
+<div class="canvas">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TIMELINE ANCHOR: REGISTRATION             -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="t-anchor">
+    <div class="t-anchor-line"></div>
+    <div class="t-anchor-badge">⏱ &nbsp;T0 — LEAD REGISTERS FOR WEBINAR</div>
+    <div class="t-anchor-line"></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-lbl"><span class="step-num">STEP 1</span>Registration Trigger + Immediate Notifications</div>
+
+  <div class="node hs">
+    <div class="node-stripe"></div>
+    <div class="node-hd">
+      <div class="node-hd-left">
+        <span class="sys-badge">HUBSPOT</span>
+        <span class="node-title">Webinar Registration Received</span>
+      </div>
+      <span class="status-tag ok">T+0 · Immediate</span>
+    </div>
+    <div class="node-body">
+      <div class="fg">
+        <div class="fg-lbl">Trigger</div>
+        <div class="chips">
+          <span class="chip"><span class="chip-dot"></span>Contact registers for webinar</span>
+          <span class="chip"><span class="chip-dot"></span>Lifecycle stage → Marketing Qualified Lead</span>
+          <span class="chip"><span class="chip-dot"></span>Contact created or updated in HubSpot</span>
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fg-lbl">Immediate notifications sent</div>
+        <div class="notif-grid">
+          <div class="notif-block">
+            <div class="notif-sys">SLACK → #sdr-inbound-leads</div>
+            <div class="notif-txt">New webinar registrant — contact name, company, and webinar title. SDR to claim or confirm ownership.</div>
+          </div>
+          <div class="notif-block">
+            <div class="notif-sys">HUBSPOT NOTIFICATION → AE + SDR</div>
+            <div class="notif-txt">Assigned AE and SDR notified of new webinar registrant on their account.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector: +24h -->
+  <div class="conn">
+    <div class="conn-line"></div>
+    <div class="conn-lbl">+24 HRS</div>
+    <div class="conn-line" style="min-height:12px"></div>
+    <div class="conn-arrow"></div>
+  </div>
+
+  <!-- Fork into parallel tracks -->
+  <div class="fork-stem"><div class="fork-stem-line"></div></div>
+  <div class="fork-bar"></div>
+  <div class="fork-legs"><div class="fork-leg"></div><div class="fork-leg"></div></div>
+
+  <!-- STEP 2: Parallel -->
+  <div class="step-lbl"><span class="step-num">STEP 2</span>Pre-Webinar Parallel Motions <span style="font-size:12px;font-weight:400;color:var(--t3)">&nbsp;— D+1 through webinar day</span></div>
+  <div class="two-col">
+
+    <!-- ─── LEFT: FIELD MARKETING ─── -->
+    <div>
+      <span class="track-label fm">Field Marketing Track</span>
+
+      <div class="node fm">
+        <div class="node-stripe"></div>
+        <div class="node-hd">
+          <div class="node-hd-left">
+            <span class="sys-badge">FIELD MARKETING</span>
+            <span class="node-title">Pre-Webinar Email Sequence</span>
+          </div>
+          <span class="status-tag sla">⚠ SLA needed</span>
+        </div>
+        <div class="node-body">
+          <div class="email-seq">
+
+            <!-- Email 1 -->
+            <div class="email-item">
+              <span class="email-num">E1</span>
+              <div class="email-detail">
+                <div class="email-title">Gov Intro</div>
+                <span class="timing-pill fm">D+1 after registration</span>
+                <div style="font-size:11px;color:var(--t2);margin-bottom:6px;">First touch. Introduce GovDash and connect the value to their role.</div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Subject line</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. Welcome to [Webinar Name] — here's what GovDash can do for you"></div>
+                </div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Sender / from name</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. Cydney from GovDash"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email 2 -->
+            <div class="email-item">
+              <span class="email-num">E2</span>
+              <div class="email-detail">
+                <div class="email-title">Webinar Intro</div>
+                <div class="sla-slot" style="margin-bottom:6px">
+                  <div class="sla-hd">SLA — Send timing (days after registration)</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. D+3 or D+5 — TBD based on webinar date"></div>
+                </div>
+                <div style="font-size:11px;color:var(--t2);margin-bottom:6px;">Set expectations for the webinar. Preview speakers, agenda, or key topics.</div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Subject line</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. Here's what we'll cover at [Webinar Name]"></div>
+                </div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Key content / agenda highlights</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. speaker names, 3 topics we'll cover"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email 3 -->
+            <div class="email-item">
+              <span class="email-num">E3</span>
+              <div class="email-detail">
+                <div class="email-title">Webinar Reminder</div>
+                <span class="timing-pill fm">1 day before webinar</span>
+                <div style="font-size:11px;color:var(--t2);margin-bottom:6px;">Automated reminder to join tomorrow. Include join link + agenda.</div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Any custom copy or CTA to add</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. speaker spotlight, last-minute teaser, add-to-calendar link"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RIGHT: SDR ─── -->
+    <div>
+      <span class="track-label sdr">SDR Track</span>
+
+      <div class="node sdr">
+        <div class="node-stripe"></div>
+        <div class="node-hd">
+          <div class="node-hd-left">
+            <span class="sys-badge">SDR</span>
+            <span class="node-title">Outreach — D+1 after Registration</span>
+          </div>
+          <span class="status-tag sla">⚠ SLA needed</span>
+        </div>
+        <div class="node-body">
+          <div class="fg">
+            <div class="fg-lbl">Outreach channel</div>
+            <div class="chips">
+              <span class="chip"><span class="chip-dot"></span>Phone call</span>
+              <span class="chip"><span class="chip-dot"></span>LinkedIn message</span>
+            </div>
+          </div>
+          <div class="fg">
+            <div class="fg-lbl">Goal</div>
+            <div style="font-size:12px;color:var(--t2);line-height:1.5;">Warm intro — let them know about GovDash, express genuine interest in their role, and build rapport before the webinar.</div>
+          </div>
+          <div class="sla-slot">
+            <div class="sla-hd">SLA — Call script / talk track</div>
+            <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. 'Hey [Name], saw you registered for our webinar — wanted to reach out before the event and learn more about what you're working on…'"></div>
+          </div>
+          <div class="note-bar" style="margin-top:12px;">
+            <span>→</span><span>Log all outreach as HubSpot activities. Note if contact engaged or left voicemail.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connector to webinar day -->
+      <div class="conn" style="margin: 10px 0;">
+        <div class="conn-line"></div>
+        <div class="conn-lbl">WEBINAR DAY</div>
+        <div class="conn-line" style="min-height:12px;"></div>
+        <div class="conn-arrow"></div>
+      </div>
+
+      <div class="node sdr">
+        <div class="node-stripe"></div>
+        <div class="node-hd">
+          <div class="node-hd-left">
+            <span class="sys-badge">SDR</span>
+            <span class="node-title">Join Webinar + Engage Live</span>
+          </div>
+          <span class="status-tag ok">✓ Defined</span>
+        </div>
+        <div class="node-body">
+          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">SDRs join the live session. Engage with assigned registrants in the webinar chat. Take live notes on participation and questions asked.</div>
+          <div class="note-bar">
+            <span>→</span><span>Log webinar attendance + any live chat interactions as a HubSpot note before end of day.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end two-col -->
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TIMELINE ANCHOR: WEBINAR IN PROGRESS      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="t-anchor live" style="margin-top: 40px;">
+    <div class="t-anchor-line"></div>
+    <div class="t-anchor-badge">▶ &nbsp;WEBINAR IN PROGRESS</div>
+    <div class="t-anchor-line"></div>
+  </div>
+
+  <!-- Merge from two parallel columns -->
+  <div class="merge-legs"><div class="merge-leg"></div><div class="merge-leg"></div></div>
+  <div class="merge-bar"></div>
+  <div class="merge-stem"><div class="merge-stem-line"></div></div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TIMELINE ANCHOR: WEBINAR ENDS             -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="t-anchor end">
+    <div class="t-anchor-line"></div>
+    <div class="t-anchor-badge">⏱ &nbsp;T1 — WEBINAR ENDS</div>
+    <div class="t-anchor-line"></div>
+  </div>
+
+  <!-- Decision -->
+  <div class="conn" style="padding:0;">
+    <div class="conn-line" style="min-height:14px;"></div>
+    <div class="conn-arrow"></div>
+  </div>
+
+  <div class="decision-wrap">
+    <div class="decision-card">
+      <div class="decision-icon">◆</div>
+      <div class="decision-label">Did the lead attend?</div>
+      <div class="decision-sub">Split by attendance status</div>
+    </div>
+  </div>
+
+  <div class="fork-stem"><div class="fork-stem-line"></div></div>
+  <div class="fork-bar"></div>
+  <div class="fork-legs"><div class="fork-leg"></div><div class="fork-leg"></div></div>
+
+  <!-- STEP 3: Post-webinar split -->
+  <div class="step-lbl"><span class="step-num">STEP 3</span>Post-Webinar Follow-Up <span style="font-size:12px;font-weight:400;color:var(--t3)">&nbsp;— two routes based on attendance</span></div>
+  <div class="two-col">
+
+    <!-- ─── LEFT: NO-SHOW ─── -->
+    <div>
+      <span class="branch-lbl noshow">✕ NO-SHOW — registered but did not attend</span>
+
+      <div class="node fm">
+        <div class="node-stripe"></div>
+        <div class="node-hd">
+          <div class="node-hd-left">
+            <span class="sys-badge">FIELD MARKETING</span>
+            <span class="node-title">No-Show Nurture</span>
+          </div>
+          <span class="status-tag sla">⚠ SLA needed</span>
+        </div>
+        <div class="node-body">
+
+          <div class="email-item" style="padding-top:0;">
+            <span class="email-num">E1</span>
+            <div class="email-detail">
+              <div class="email-title">We missed you</div>
+              <span class="timing-pill fm">+24h after webinar</span>
+              <div style="font-size:11px;color:var(--t2);margin-bottom:6px;">Send webinar recap and all available assets. Keep them warm for future engagement.</div>
+              <div class="sla-slot">
+                <div class="sla-hd">SLA — Subject line</div>
+                <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. We missed you — here's the [Webinar Name] recap"></div>
+              </div>
+              <div class="sla-slot">
+                <div class="sla-hd">SLA — Assets to include (recording, slides, takeaways)</div>
+                <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. recording link, slide deck, 3 key takeaways doc"></div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="fg-lbl">Then → Regular Nurture</div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:8px;">Lead moves into the standard nurture track. FM owns ongoing outreach.</div>
+          <div class="sla-slot">
+            <div class="sla-hd">SLA — Regular nurture cadence + topics</div>
+            <div class="sla-body sla-editable" contenteditable="true" data-ph="Define nurture cadence, email frequency, topic themes, exit criteria (e.g. 3 emails over 30 days → SDR re-engage)"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RIGHT: ATTENDED ─── -->
+    <div>
+      <span class="branch-lbl attended">✓ ATTENDED — joined the live session</span>
+
+      <div class="node fm">
+        <div class="node-stripe"></div>
+        <div class="node-hd">
+          <div class="node-hd-left">
+            <span class="sys-badge">FIELD MARKETING</span>
+            <span class="node-title">Post-Webinar FM Sequence</span>
+          </div>
+          <span class="status-tag sla">⚠ SLA needed</span>
+        </div>
+        <div class="node-body">
+
+          <div class="email-seq">
+
+            <!-- Email 1: Thank you -->
+            <div class="email-item" style="padding-top:0;">
+              <span class="email-num">E1</span>
+              <div class="email-detail">
+                <div class="email-title">Thank you + SDR booking link</div>
+                <span class="timing-pill fm">Immediately after webinar</span>
+                <div style="font-size:11px;color:var(--t2);margin-bottom:6px;">Thank them for attending. Include the SDR booking link to set up a discovery call.</div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Subject line</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. Thanks for joining — book a quick intro with our team"></div>
+                </div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — SDR booking link</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. Calendly or HubSpot meetings link for SDR"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email 2: Reminder -->
+            <div class="email-item">
+              <span class="email-num">E2</span>
+              <div class="email-detail">
+                <div class="email-title">Booking reminder</div>
+                <span class="timing-pill fm">+24h · if no meeting booked</span>
+                <div style="font-size:11px;color:var(--t2);margin-bottom:6px;">Light nudge. Re-send the same booking link. Keep tone warm and low-pressure.</div>
+                <div class="sla-slot">
+                  <div class="sla-hd">SLA — Subject line variation</div>
+                  <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. Still want to connect? Here's the link again"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Divider before meeting check -->
+          <hr class="divider" style="margin-top:14px;">
+
+          <div class="fg-lbl" style="margin-bottom:8px;">+48h after webinar — meeting check</div>
+          <div class="mini-split">
+            <div class="mini-branch booked">
+              <div class="mini-branch-lbl booked">✓ MEETING BOOKED</div>
+              <div class="mini-branch-txt">FM stops. SDR runs the discovery call as scheduled. No further automated emails from FM.</div>
+            </div>
+            <div class="mini-branch nobook">
+              <div class="mini-branch-lbl nobook">✕ NO MEETING BOOKED</div>
+              <div class="mini-branch-txt">SDR takes over. Starts direct outreach — calls and LinkedIn messages to move the lead.</div>
+            </div>
+          </div>
+
+          <!-- SDR escalation at 14 days -->
+          <div class="esc-card">
+            <div class="esc-stripe"></div>
+            <div class="esc-hd">
+              <div class="node-hd-left">
+                <span class="sys-badge" style="--accent:var(--sdr);--muted:var(--sdr-muted)">SDR</span>
+                <span class="esc-title">Escalation if Still No Booking</span>
+              </div>
+              <span class="status-tag warn">+14 days</span>
+            </div>
+            <div class="esc-body">
+              <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:8px;">If no meeting is booked 14 days after the webinar, SDR escalates outreach. Review with AE: continue nurture, re-engage with new content, or classify as long-term.</div>
+              <div class="sla-slot">
+                <div class="sla-hd">SLA — Escalation playbook / next steps</div>
+                <div class="sla-body sla-editable" contenteditable="true" data-ph="e.g. move to long-term nurture, AE review, reassign to different rep, re-enroll in new campaign…"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end two-col -->
+
+</div><!-- end canvas -->
+
+</body>
+</html>
