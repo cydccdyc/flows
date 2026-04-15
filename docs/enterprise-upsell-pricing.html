@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GovDash — Enterprise Pricing Strategy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #E8EDF5;
+      --surface:  #FFFFFF;
+      --border:   #D8E0EC;
+      --blue:     #2563EB;
+      --blue-m:   #DBEAFE;
+      --navy:     #0F172A;
+      --t1:       #0F172A;
+      --t2:       #475569;
+      --t3:       #94A3B8;
+      --green:    #10B981;
+      --green-m:  #D1FAE5;
+      --amber:    #F59E0B;
+      --amber-m:  #FEF3C7;
+      --red:      #EF4444;
+      --red-m:    #FEE2E2;
+      --shadow:   0 2px 12px rgba(15,30,60,0.10), 0 0 0 1px rgba(15,30,60,0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lexend Deca', sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(circle, rgba(100,120,180,0.15) 1px, transparent 1px);
+      background-size: 22px 22px;
+      color: var(--t1);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-left { display: flex; align-items: center; gap: 10px; }
+    .nav-logo {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, #2563EB, #4F46E5);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 13px;
+    }
+    .nav-title { font-size: 13px; font-weight: 600; color: var(--t1); }
+    .nav-sub   { font-size: 11px; color: var(--t3); font-family: 'JetBrains Mono', monospace; }
+    .nav-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pill {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      padding: 3px 9px; border-radius: 20px;
+      background: var(--blue-m); color: var(--blue);
+      border: 1px solid #BFDBFE; cursor: pointer;
+      text-decoration: none; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .nav-pill:hover { background: #BFDBFE; }
+    .nav-pill.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+    /* ── CANVAS ── */
+    .canvas { max-width: 960px; margin: 0 auto; padding: 48px 28px 120px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── SLIDE CARD ── */
+    .slide {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .slide-stripe { height: 4px; background: linear-gradient(90deg, var(--blue), #4F46E5); }
+    .slide-stripe.green  { background: linear-gradient(90deg, var(--green), #059669); }
+    .slide-stripe.amber  { background: linear-gradient(90deg, var(--amber), #D97706); }
+    .slide-stripe.navy   { background: linear-gradient(90deg, var(--navy), #1E293B); }
+    .slide-body { padding: 36px 40px; }
+
+    /* cover */
+    .cover-body {
+      padding: 64px 56px;
+      background: var(--navy);
+      color: white;
+      min-height: 300px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .cover-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #60A5FA; margin-bottom: 20px;
+    }
+    .cover-h1 { font-size: 34px; font-weight: 700; letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px; }
+    .cover-h1 span { color: #60A5FA; }
+    .cover-sub { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 300; max-width: 500px; }
+    .cover-meta { display: flex; gap: 24px; margin-top: 48px; }
+    .cover-meta-item { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; }
+
+    /* slide header */
+    .slide-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 4px;
+    }
+    .slide-h { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--t1); margin-bottom: 6px; }
+    .slide-tagline { font-size: 12px; color: var(--t3); margin-bottom: 28px; font-weight: 300; }
+
+    /* ── COMPONENTS ── */
+
+    /* two-q split */
+    .two-q { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0; }
+    .q-box {
+      border-radius: 10px; padding: 20px 22px;
+      border: 1px solid var(--border); background: #F8FAFC;
+    }
+    .q-box.blue { background: var(--blue-m); border-color: #BFDBFE; }
+    .q-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;
+      color: var(--blue);
+    }
+    .q-box:not(.blue) .q-label { color: var(--t3); }
+    .q-title { font-size: 15px; font-weight: 600; color: var(--t1); margin-bottom: 8px; }
+    .q-desc  { font-size: 11px; color: var(--t2); line-height: 1.65; }
+    .q-modules { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+    .mod-chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      padding: 3px 9px; border-radius: 5px;
+      background: var(--blue); color: white;
+    }
+    .mod-chip.ghost { background: transparent; border: 1px dashed #BFDBFE; color: var(--blue); }
+
+    /* before/after matrix */
+    .ba-wrap { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; }
+    .ba-arrow { font-size: 22px; color: var(--t3); text-align: center; }
+    .ba-box {
+      border-radius: 10px; border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .ba-hd {
+      padding: 10px 16px;
+      background: #F1F5F9; border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--t3);
+    }
+    .ba-hd.now  { background: var(--red-m); color: var(--red); }
+    .ba-hd.next { background: var(--green-m); color: #065F46; }
+    .ba-body { padding: 16px; }
+    .platform-badge {
+      display: inline-block; padding: 6px 14px;
+      border-radius: 6px; background: #F1F5F9; border: 1px solid var(--border);
+      font-size: 13px; font-weight: 600; color: var(--t2); margin-bottom: 6px;
+    }
+    .platform-sub { font-size: 11px; color: var(--t3); }
+    .matrix-wrap { overflow-x: auto; }
+    .matrix {
+      width: 100%; border-collapse: collapse; font-size: 11px;
+    }
+    .matrix th {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 7px 10px; background: #F8FAFC;
+      border: 1px solid var(--border); color: var(--t3);
+      text-align: center;
+    }
+    .matrix th.mod { text-align: left; }
+    .matrix td {
+      padding: 8px 10px; border: 1px solid var(--border);
+      color: var(--t2); font-size: 11px;
+    }
+    .matrix td.mod-name { font-weight: 600; color: var(--t1); }
+    .matrix td.price { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+    .matrix td.price.std  { background: #F8FAFC; }
+    .matrix td.price.ent  { background: var(--blue-m); color: var(--blue); font-weight: 600; }
+    .axis-label { font-size: 10px; color: var(--t3); margin-top: 10px; font-family: 'JetBrains Mono', monospace; }
+
+    /* section heading */
+    .sh {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--t3); margin: 24px 0 10px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sh:first-of-type { margin-top: 0; }
+
+    /* signal box */
+    .signal-box {
+      border-radius: 10px; padding: 18px 20px;
+      border: 1px solid #FECACA; background: var(--red-m);
+      display: flex; align-items: flex-start; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .signal-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .signal-title { font-size: 13px; font-weight: 600; color: #991B1B; margin-bottom: 4px; }
+    .signal-desc  { font-size: 11px; color: #7F1D1D; line-height: 1.6; }
+
+    /* module status table */
+    .status-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .status-table th {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 12px; background: #F8FAFC;
+      border: 1px solid var(--border); color: var(--t3); text-align: left;
+    }
+    .status-table td { padding: 10px 12px; border: 1px solid var(--border); color: var(--t2); }
+    .status-table td.name { font-weight: 600; color: var(--t1); }
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      padding: 2px 8px; border-radius: 4px; letter-spacing: 0.06em;
+    }
+    .badge.red    { background: var(--red-m);   color: #991B1B; border: 1px solid #FCA5A5; }
+    .badge.grey   { background: #F1F5F9;         color: var(--t3);  border: 1px solid var(--border); }
+    .badge.green  { background: var(--green-m);  color: #065F46; border: 1px solid #6EE7B7; }
+    .badge.amber  { background: var(--amber-m);  color: #92400E; border: 1px solid #FCD34D; }
+
+    /* enterprise feature table */
+    .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .feat-col { border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+    .feat-col-hd {
+      padding: 8px 14px; font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .feat-col-hd.in  { background: var(--green-m); color: #065F46; }
+    .feat-col-hd.out { background: #F1F5F9; color: var(--t3); }
+    .feat-list { list-style: none; }
+    .feat-list li {
+      padding: 9px 14px; border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--t2); display: flex; align-items: center; gap: 8px;
+    }
+    .feat-list li::before { font-size: 12px; }
+    .feat-col.in  .feat-list li::before { content: '✦'; color: var(--green); }
+    .feat-col.out .feat-list li::before { content: '○'; color: var(--t3); }
+    .feat-note { font-size: 10px; color: var(--t3); margin-top: 2px; }
+
+    /* steps flow */
+    .steps-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; align-items: stretch; margin: 8px 0; }
+    .step-card {
+      border-radius: 10px; border: 1px solid var(--border);
+      background: #F8FAFC; padding: 18px 16px;
+    }
+    .step-card.blue { background: var(--blue-m); border-color: #BFDBFE; }
+    .step-card.navy { background: var(--navy); border-color: var(--navy); }
+    .step-num-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 4px;
+      display: inline-block; margin-bottom: 10px;
+    }
+    .step-card .step-num-badge       { background: var(--border); color: var(--t3); }
+    .step-card.blue .step-num-badge  { background: #BFDBFE; color: var(--blue); }
+    .step-card.navy .step-num-badge  { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); }
+    .step-card-title { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 6px; }
+    .step-card.navy .step-card-title { color: white; }
+    .step-card-body  { font-size: 11px; color: var(--t2); line-height: 1.65; }
+    .step-card.navy .step-card-body  { color: rgba(255,255,255,0.55); }
+    .step-arrow { display: flex; align-items: center; justify-content: center; padding: 0 12px; color: var(--t3); font-size: 18px; }
+
+    /* conjoint card mock */
+    .conjoint-demo {
+      border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden;
+      margin: 4px 0;
+    }
+    .conjoint-demo-hd {
+      background: #F8FAFC; padding: 12px 18px; border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      color: var(--t3); letter-spacing: 0.08em;
+    }
+    .conjoint-demo-q {
+      padding: 14px 18px 10px; font-size: 12px; font-weight: 600; color: var(--t1);
+      border-bottom: 1px solid var(--border);
+    }
+    .conjoint-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+    .c-opt {
+      padding: 16px 14px; border-right: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .c-opt:last-child { border-right: none; }
+    .c-opt:hover { background: #F8FAFC; }
+    .c-opt.selected { background: var(--blue-m); border-bottom: 2px solid var(--blue); }
+    .c-opt-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.1em; color: var(--t3); margin-bottom: 8px;
+    }
+    .c-opt.selected .c-opt-label { color: var(--blue); }
+    .c-opt-name { font-size: 12px; font-weight: 600; color: var(--t1); margin-bottom: 4px; }
+    .c-opt-features { font-size: 10px; color: var(--t2); line-height: 1.6; margin-bottom: 10px; }
+    .c-opt-price {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-weight: 600; color: var(--blue);
+    }
+    .c-opt.neither .c-opt-name { color: var(--t3); }
+    .c-opt.neither .c-opt-price { color: var(--t3); font-size: 10px; }
+    .conjoint-progress { padding: 8px 18px; background: #F8FAFC; display: flex; align-items: center; gap: 8px; }
+    .progress-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 30%; background: var(--blue); border-radius: 2px; }
+    .progress-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--t3); }
+
+    /* vw questions */
+    .vw-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .vw-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 16px; border-radius: 8px;
+      background: #F8FAFC; border: 1px solid var(--border);
+      font-size: 12px; color: var(--t2);
+    }
+    .vw-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      background: var(--navy); color: white;
+      padding: 3px 7px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* attribute table */
+    .attr-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 16px; }
+    .attr-table th {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 12px; background: #F8FAFC;
+      border: 1px solid var(--border); color: var(--t3); text-align: left;
+    }
+    .attr-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--t2); }
+    .attr-table td.attr { font-weight: 600; color: var(--t1); }
+    .levels { display: flex; flex-wrap: wrap; gap: 4px; }
+    .level-chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      padding: 2px 8px; border-radius: 4px;
+      background: var(--blue-m); color: var(--blue); border: 1px solid #BFDBFE;
+    }
+
+    /* sample size */
+    .sample-row { display: flex; gap: 12px; }
+    .sample-card {
+      flex: 1; border-radius: 10px; border: 1px solid var(--border);
+      padding: 16px 18px; background: #F8FAFC;
+    }
+    .sample-n {
+      font-family: 'JetBrains Mono', monospace; font-size: 26px;
+      font-weight: 600; color: var(--t1); margin-bottom: 4px;
+    }
+    .sample-label { font-size: 11px; color: var(--t2); margin-bottom: 6px; }
+    .sample-note  { font-size: 10px; color: var(--t3); }
+
+    /* bar chart */
+    .bar-section { margin-bottom: 20px; }
+    .bar-section-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--t3); margin-bottom: 10px;
+    }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .bar-label { font-size: 11px; color: var(--t2); width: 160px; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 10px; background: #EFF2F7; border-radius: 5px; overflow: hidden; position: relative; }
+    .bar-fill  { height: 100%; border-radius: 5px; background: var(--blue); transition: width 0.4s; }
+    .bar-fill.green { background: var(--green); }
+    .bar-fill.amber { background: var(--amber); }
+    .bar-fill.red   { background: var(--red); }
+    .bar-val { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--t2); width: 50px; flex-shrink: 0; }
+    .bar-marker { position: absolute; top: -3px; height: 16px; width: 2px; background: var(--red); border-radius: 1px; }
+    .bar-marker-lbl { position: absolute; top: -18px; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--red); white-space: nowrap; transform: translateX(-50%); }
+
+    /* channel table */
+    .channel-grid { display: flex; flex-direction: column; gap: 8px; }
+    .channel-row {
+      display: grid; grid-template-columns: 180px 1fr;
+      border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+    }
+    .channel-type {
+      padding: 12px 14px; background: #F8FAFC;
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      letter-spacing: 0.08em; color: var(--t2); font-weight: 600;
+      border-right: 1px solid var(--border); display: flex; align-items: center;
+    }
+    .channel-desc { padding: 12px 14px; font-size: 11px; color: var(--t2); }
+
+    /* asks */
+    .asks { display: flex; flex-direction: column; gap: 10px; }
+    .ask-row {
+      display: grid; grid-template-columns: auto 1fr;
+      gap: 16px; align-items: start;
+      border-radius: 10px; border: 1px solid var(--border);
+      padding: 16px 18px; background: #F8FAFC;
+    }
+    .ask-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--navy); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-weight: 600; flex-shrink: 0;
+    }
+    .ask-q { font-size: 12px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+    .ask-note { font-size: 11px; color: var(--t3); }
+
+    /* callout */
+    .callout {
+      border-radius: 8px; padding: 14px 16px; margin-top: 16px;
+      border-left: 3px solid var(--blue); background: var(--blue-m);
+      font-size: 11px; color: var(--t2); line-height: 1.65;
+    }
+    .callout strong { color: var(--t1); }
+
+    /* slide footer */
+    .slide-footer {
+      padding: 10px 40px; border-top: 1px solid var(--border);
+      background: #FAFBFC; display: flex; justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--t3);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-left">
+    <div class="nav-logo">G</div>
+    <div>
+      <div class="nav-title">GovDash — Enterprise Pricing Strategy</div>
+      <div class="nav-sub">April 2026 · Cydney Chai → Sean Doherty</div>
+    </div>
+  </div>
+  <div class="nav-pills">
+    <a class="nav-pill" href="#two-questions">Two Questions</a>
+    <a class="nav-pill" href="#module-pricing">Module Pricing</a>
+    <a class="nav-pill" href="#enterprise-tier">Enterprise Tier</a>
+    <a class="nav-pill" href="#conjoint">Conjoint Survey</a>
+    <a class="nav-pill" href="#analysis">Analysis Output</a>
+    <a class="nav-pill" href="#asks">Asks</a>
+  </div>
+</nav>
+
+<div class="canvas">
+
+  <!-- ── COVER ── -->
+  <div class="slide">
+    <div class="cover-body">
+      <div>
+        <div class="cover-eyebrow">GovDash · Revenue Strategy · April 2026</div>
+        <div class="cover-h1">Enterprise<br><span>Pricing Strategy</span></div>
+        <div class="cover-sub">How we price modules and the enterprise tier upgrade — and how we get real customer data before we commit to any model.</div>
+      </div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">PRESENTED BY · CYDNEY CHAI</div>
+        <div class="cover-meta-item">FOR · SEAN DOHERTY</div>
+        <div class="cover-meta-item">DATE · APRIL 15, 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 1: TWO QUESTIONS ── -->
+  <div class="slide" id="two-questions">
+    <div class="slide-stripe"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 01</div>
+      <div class="slide-h">Two Pricing Questions on the Table</div>
+      <div class="slide-tagline">Both need data before we commit. Same method answers both.</div>
+      <div class="two-q">
+        <div class="q-box blue">
+          <div class="q-label">Question 01 — Modules</div>
+          <div class="q-title">How do we price modules?</div>
+          <div class="q-desc">GovDash sells as a full platform today. We want to sell by module — but only Pricer has been priced, and it didn't sell.</div>
+          <div class="q-modules">
+            <span class="mod-chip">Pricer</span>
+            <span class="mod-chip ghost">Discover</span>
+            <span class="mod-chip ghost">Capture</span>
+            <span class="mod-chip ghost">Proposal</span>
+          </div>
+        </div>
+        <div class="q-box">
+          <div class="q-label">Question 02 — Enterprise Tier</div>
+          <div class="q-title">How do we price the enterprise upgrade?</div>
+          <div class="q-desc">Compliance, org management, and security capabilities on top of whatever a customer already has. An account-level upgrade — not a feature.</div>
+          <div class="q-modules">
+            <span class="mod-chip ghost" style="border-color:#C7D2FE;color:#4F46E5">DLP Rules</span>
+            <span class="mod-chip ghost" style="border-color:#C7D2FE;color:#4F46E5">Activity Logs</span>
+            <span class="mod-chip ghost" style="border-color:#C7D2FE;color:#4F46E5">Key Mgmt</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Two separate pricing axes — same research methodology answers both</span>
+      <span>Slide 01 / 06</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: BEFORE / AFTER ── -->
+  <div class="slide">
+    <div class="slide-stripe"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 02</div>
+      <div class="slide-h">Before → After</div>
+      <div class="slide-tagline">From one flat platform price to a module × tier matrix.</div>
+      <div class="ba-wrap">
+        <div class="ba-box">
+          <div class="ba-hd now">Today</div>
+          <div class="ba-body">
+            <div class="platform-badge">Full Platform</div>
+            <div class="platform-sub" style="margin-top:6px">One price · All modules · One tier<br>Tier 1–8 account bands</div>
+          </div>
+        </div>
+        <div class="ba-arrow">→</div>
+        <div class="ba-box">
+          <div class="ba-hd next">Target State</div>
+          <div class="ba-body">
+            <div class="matrix-wrap">
+              <table class="matrix">
+                <thead>
+                  <tr>
+                    <th class="mod">Module</th>
+                    <th>Standard</th>
+                    <th>Enterprise</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="mod-name">Pricer</td><td class="price std">$X</td><td class="price ent">$X + E</td></tr>
+                  <tr><td class="mod-name">Discover</td><td class="price std">$X</td><td class="price ent">$X + E</td></tr>
+                  <tr><td class="mod-name">Capture</td><td class="price std">$X</td><td class="price ent">$X + E</td></tr>
+                  <tr><td class="mod-name">Proposal</td><td class="price std">$X</td><td class="price ent">$X + E</td></tr>
+                  <tr><td class="mod-name">Full Platform</td><td class="price std">$X</td><td class="price ent">$X + E</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="axis-label" style="margin-top:10px">← what you buy &nbsp;·&nbsp; how you buy it ↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Modules = horizontal axis · Enterprise tier = vertical axis</span>
+      <span>Slide 02 / 06</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: MODULE PRICING ── -->
+  <div class="slide" id="module-pricing">
+    <div class="slide-stripe amber"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 03</div>
+      <div class="slide-h">Module Pricing — Where We Are</div>
+      <div class="slide-tagline">One module priced. One customer sold. The market gave us feedback.</div>
+
+      <div class="signal-box">
+        <div class="signal-icon">⚠</div>
+        <div>
+          <div class="signal-title">Pricer is priced too high</div>
+          <div class="signal-desc">Set at 35–42% of full platform price (Tier 1–8) based on unstructured engineer conversations — no designed survey. Result: 1 customer sold. The market said no.</div>
+        </div>
+      </div>
+
+      <div class="sh">Current module status</div>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Standalone Pricing</th>
+            <th>Status</th>
+            <th>Signal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Pricer</td>
+            <td>35–42% of platform</td>
+            <td><span class="badge red">Needs repricing</span></td>
+            <td>1 customer sold — price too high</td>
+          </tr>
+          <tr>
+            <td class="name">Discover</td>
+            <td>—</td>
+            <td><span class="badge grey">Not priced</span></td>
+            <td>No data</td>
+          </tr>
+          <tr>
+            <td class="name">Capture</td>
+            <td>—</td>
+            <td><span class="badge grey">Not priced</span></td>
+            <td>No data</td>
+          </tr>
+          <tr>
+            <td class="name">Proposal</td>
+            <td>—</td>
+            <td><span class="badge grey">Not priced</span></td>
+            <td>No data</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>What we need to answer:</strong> What is the right price for Pricer? How do we price Discover, Capture, and Proposal using Pricer as an anchor? What's the incentive to buy the full platform vs. picking modules?
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Pricer pricing based on unstructured research — needs validation before extending to other modules</span>
+      <span>Slide 03 / 06</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: ENTERPRISE TIER ── -->
+  <div class="slide" id="enterprise-tier">
+    <div class="slide-stripe" style="background:linear-gradient(90deg,#4F46E5,#7C3AED)"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 04</div>
+      <div class="slide-h">Enterprise Tier Upgrade</div>
+      <div class="slide-tagline">An account-level upgrade — not a feature add-on. On top of any module or full platform.</div>
+
+      <div class="sh">Feature scoping</div>
+      <div class="feat-grid">
+        <div class="feat-col in">
+          <div class="feat-col-hd in">Upsell — Enterprise tier</div>
+          <ul class="feat-list">
+            <li>DLP rules <span class="feat-note">(especially for CUI)</span></li>
+            <li>Customer Key Management</li>
+            <li>Activity log exports</li>
+            <li>Custom Terms of Service</li>
+            <li>Org / subsidiary model <span class="feat-note">(pilot test only)</span></li>
+          </ul>
+        </div>
+        <div class="feat-col out">
+          <div class="feat-col-hd out">Bundle with platform — do not upsell</div>
+          <ul class="feat-list">
+            <li>SCIM provisioning <span class="feat-note">(security primitive)</span></li>
+            <li>SSO <span class="feat-note">(security primitive)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sh" style="margin-top:20px">Pricing model options to test</div>
+      <table class="status-table">
+        <thead>
+          <tr><th>Model</th><th>How it works</th><th>Pro</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Tier-based only</td>
+            <td>Enterprise features unlock at a new tier</td>
+            <td>Simple, predictable</td>
+            <td>Underprices heavy users</td>
+          </tr>
+          <tr>
+            <td class="name">Intelligence / credits</td>
+            <td>Price per unit of work</td>
+            <td>Aligns cost to value</td>
+            <td>Unpredictable billing in gov</td>
+          </tr>
+          <tr>
+            <td class="name" style="color:#2563EB">Hybrid ✦ Recommended</td>
+            <td>Base tier stays · credits on upsell features</td>
+            <td>Incremental, reversible</td>
+            <td>Two models to maintain</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">
+      <span>Recommended: start hybrid · hold credits pricing until pilot data is in</span>
+      <span>Slide 04 / 06</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: CONJOINT ── -->
+  <div class="slide" id="conjoint">
+    <div class="slide-stripe green"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 05</div>
+      <div class="slide-h">The Conjoint Survey — How It Works</div>
+      <div class="slide-tagline">Not "would you pay $X?" — we force real trade-offs. 8–10 rounds, pick one each time.</div>
+
+      <div class="sh">What the customer sees</div>
+      <div class="conjoint-demo">
+        <div class="conjoint-demo-hd">QUESTION 3 OF 10 · ENTERPRISE PRICING RESEARCH</div>
+        <div class="conjoint-demo-q">Which of these would you choose for your organization?</div>
+        <div class="conjoint-options">
+          <div class="c-opt selected">
+            <div class="c-opt-label">OPTION A</div>
+            <div class="c-opt-name">Pricer + Capture</div>
+            <div class="c-opt-features">Both modules · Flat monthly · Standard tier</div>
+            <div class="c-opt-price">$X / month</div>
+          </div>
+          <div class="c-opt">
+            <div class="c-opt-label">OPTION B</div>
+            <div class="c-opt-name">Pricer only</div>
+            <div class="c-opt-features">Single module · Flat monthly · Standard tier</div>
+            <div class="c-opt-price">$X / month</div>
+          </div>
+          <div class="c-opt neither">
+            <div class="c-opt-label">OPTION C</div>
+            <div class="c-opt-name">Neither</div>
+            <div class="c-opt-features">I wouldn't choose any of these options</div>
+            <div class="c-opt-price">Skip</div>
+          </div>
+        </div>
+        <div class="conjoint-progress">
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+          <div class="progress-lbl">3 / 10</div>
+        </div>
+      </div>
+
+      <div class="sh" style="margin-top:20px">What we test — Track 1: Modules</div>
+      <table class="attr-table">
+        <thead><tr><th>Attribute</th><th>Levels tested</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">Module bundle</td><td><div class="levels"><span class="level-chip">Pricer only</span><span class="level-chip">Pricer + Capture</span><span class="level-chip">Pricer + Discover</span><span class="level-chip">Full platform</span></div></td></tr>
+          <tr><td class="attr">Price point</td><td><div class="levels"><span class="level-chip">Low</span><span class="level-chip">Mid</span><span class="level-chip">High</span></div></td></tr>
+          <tr><td class="attr">Pricing model</td><td><div class="levels"><span class="level-chip">Flat monthly</span><span class="level-chip">Per seat</span><span class="level-chip">Usage-based</span></div></td></tr>
+        </tbody>
+      </table>
+
+      <div class="sh">What we test — Track 2: Enterprise Tier</div>
+      <table class="attr-table">
+        <thead><tr><th>Attribute</th><th>Levels tested</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">Feature bundle</td><td><div class="levels"><span class="level-chip">Compliance Core</span><span class="level-chip">Compliance Pro</span><span class="level-chip">Full Enterprise</span></div></td></tr>
+          <tr><td class="attr">Price point</td><td><div class="levels"><span class="level-chip">Low</span><span class="level-chip">Mid</span><span class="level-chip">High</span></div></td></tr>
+          <tr><td class="attr">Pricing model</td><td><div class="levels"><span class="level-chip">Flat add-on</span><span class="level-chip">Credits</span><span class="level-chip">Tier unlock</span></div></td></tr>
+        </tbody>
+      </table>
+
+      <div class="sh">Van Westendorp — run first (5 minutes, verbal, any customer call)</div>
+      <ul class="vw-list">
+        <li><span class="vw-num">Q1</span>At what price would this feel too cheap to trust?</li>
+        <li><span class="vw-num">Q2</span>At what price would this feel like a bargain?</li>
+        <li><span class="vw-num">Q3</span>At what price would this start to feel expensive?</li>
+        <li><span class="vw-num">Q4</span>At what price would this be too expensive to consider?</li>
+      </ul>
+      <div class="callout">Run with 5–8 customers on existing calls. Output = acceptable price range. That range becomes the Low / Mid / High tested in the conjoint. No survey tool needed — just ask and note the answers.</div>
+
+      <div class="sh" style="margin-top:20px">How many responses do we need?</div>
+      <div class="sample-row">
+        <div class="sample-card">
+          <div class="sample-n">5–8</div>
+          <div class="sample-label">Van Westendorp pre-screen</div>
+          <div class="sample-note">Verbal, on existing calls. No survey tool.</div>
+        </div>
+        <div class="sample-card">
+          <div class="sample-n">10–15</div>
+          <div class="sample-label">Conjoint survey completions</div>
+          <div class="sample-note">Minimum for reliable signal. Quality &gt; quantity.</div>
+        </div>
+        <div class="sample-card">
+          <div class="sample-n">Same</div>
+          <div class="sample-label">Pilot offer (behavioral)</div>
+          <div class="sample-note">Same cohort — did they pay or not?</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Tool recommendation: Conjointly.com — auto-generates cards, runs analysis</span>
+      <span>Slide 05 / 06</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5B: ANALYSIS OUTPUT ── -->
+  <div class="slide" id="analysis">
+    <div class="slide-stripe green"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 05B</div>
+      <div class="slide-h">What the Analysis Produces</div>
+      <div class="slide-tagline">One recommendation per pricing axis, backed by data. You make the call.</div>
+
+      <div class="bar-section">
+        <div class="bar-section-title">Module WTP — willingness to pay by bundle (illustrative)</div>
+        <div class="bar-row">
+          <div class="bar-label">Pricer only</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:48%"></div>
+            <div class="bar-marker" style="left:68%">
+              <div class="bar-marker-lbl">Current price</div>
+            </div>
+          </div>
+          <div class="bar-val">$X–$Y</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Pricer + Capture</div>
+          <div class="bar-track"><div class="bar-fill" style="width:62%"></div></div>
+          <div class="bar-val">$X–$Y</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Full Platform</div>
+          <div class="bar-track"><div class="bar-fill" style="width:85%"></div></div>
+          <div class="bar-val">$X–$Y</div>
+        </div>
+        <div class="callout" style="margin-top:10px">Current Pricer price (35–42% of platform) sits to the right of the WTP bar — above what customers will pay. The conjoint shows us where to reprice.</div>
+      </div>
+
+      <div class="bar-section">
+        <div class="bar-section-title">Enterprise tier — what drives purchase decisions most</div>
+        <div class="bar-row">
+          <div class="bar-label">DLP rules</div>
+          <div class="bar-track"><div class="bar-fill green" style="width:92%"></div></div>
+          <div class="bar-val">Highest</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Activity log exports</div>
+          <div class="bar-track"><div class="bar-fill green" style="width:70%"></div></div>
+          <div class="bar-val">High</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Customer Key Mgmt</div>
+          <div class="bar-track"><div class="bar-fill green" style="width:52%"></div></div>
+          <div class="bar-val">Medium</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Custom Terms of Service</div>
+          <div class="bar-track"><div class="bar-fill green" style="width:30%"></div></div>
+          <div class="bar-val">Lower</div>
+        </div>
+      </div>
+
+      <div class="bar-section">
+        <div class="bar-section-title">Pricing model preference</div>
+        <div class="bar-row">
+          <div class="bar-label">Flat monthly add-on</div>
+          <div class="bar-track"><div class="bar-fill" style="width:82%"></div></div>
+          <div class="bar-val">Most preferred</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Tier unlock</div>
+          <div class="bar-track"><div class="bar-fill amber" style="width:55%"></div></div>
+          <div class="bar-val">Mid</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Credits / usage</div>
+          <div class="bar-track"><div class="bar-fill red" style="width:28%"></div></div>
+          <div class="bar-val">Lowest</div>
+        </div>
+      </div>
+
+      <div class="sh">How we get customers to participate</div>
+      <div class="channel-grid">
+        <div class="channel-row">
+          <div class="channel-type">Renewals calls</div>
+          <div class="channel-desc">Ask Van Westendorp questions verbally — no survey link needed. Renewals already has the relationship and the calendar time.</div>
+        </div>
+        <div class="channel-row">
+          <div class="channel-type">QBRs</div>
+          <div class="channel-desc">Embed bundle trade-off as a "strategic input" conversation. Frame as: we want your feedback before we finalize.</div>
+        </div>
+        <div class="channel-row">
+          <div class="channel-type">Executive outreach</div>
+          <div class="channel-desc">Sean reaches out to Tier 1 accounts directly — "early access" framing. Response rate dramatically higher than CSM cold ask.</div>
+        </div>
+        <div class="channel-row">
+          <div class="channel-type">Renewal moment</div>
+          <div class="channel-desc">Present enterprise add-on as part of the renewal package. Customer is already in decision mode — lowest friction point.</div>
+        </div>
+      </div>
+      <div class="callout"><strong>Shortcut:</strong> Mine Gong for accounts that already raised compliance, org complexity, or specific module requests. They're warm — target them first before cold outreach.</div>
+    </div>
+    <div class="slide-footer">
+      <span>Bar charts are illustrative — actual values come from survey output</span>
+      <span>Slide 05B / 06</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: ASKS ── -->
+  <div class="slide" id="asks">
+    <div class="slide-stripe navy"></div>
+    <div class="slide-body">
+      <div class="slide-num">Slide 06</div>
+      <div class="slide-h">What I Need From You Today</div>
+      <div class="slide-tagline">Four decisions. Everything else Cydney can run.</div>
+      <div class="asks">
+        <div class="ask-row">
+          <div class="ask-num">1</div>
+          <div>
+            <div class="ask-q">Is the org model a pilot test or a real upsell candidate?</div>
+            <div class="ask-note">Ryan's point: seats may already capture org complexity value. If so, a minimum spend threshold is cleaner than a standalone upsell. Your call on framing.</div>
+          </div>
+        </div>
+        <div class="ask-row">
+          <div class="ask-num">2</div>
+          <div>
+            <div class="ask-q">Who owns feature finalization for the enterprise tier?</div>
+            <div class="ask-note">Engineering input needed on buildability · Marketing and Renewals on bundling and demand signal. Who should I pull in?</div>
+          </div>
+        </div>
+        <div class="ask-row">
+          <div class="ask-num">3</div>
+          <div>
+            <div class="ask-q">Who flags the right Tier 1–3 accounts for the pilot?</div>
+            <div class="ask-note">Renewals shortlists based on account complexity and prior enterprise requests. You confirm the final list.</div>
+          </div>
+        </div>
+        <div class="ask-row">
+          <div class="ask-num">4</div>
+          <div>
+            <div class="ask-q">Who engages pilot customers?</div>
+            <div class="ask-note">For Tier 1: direct outreach from you converts best. For Tier 2–3: AE or Renewals. Your call on who owns it.</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:20px">
+        <strong>What happens after:</strong> Cydney takes survey data, runs WTP analysis, and brings back one recommendation per axis — module pricing and enterprise tier. You make the final call on both. Timeline: data back to you by end of April.
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>GovDash · Enterprise Pricing Strategy · April 2026 · Confidential</span>
+      <span>Slide 06 / 06</span>
+    </div>
+  </div>
+
+</div><!-- /canvas -->
+
+</body>
+</html>
